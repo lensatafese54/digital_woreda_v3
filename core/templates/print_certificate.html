@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birth Certificate - {{ registration.formatted_id }}</title>
+
+    <!-- Bootstrap 5 & Ethiopic Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 8mm;
+        }
+
+        body {
+            font-family: 'Noto Sans Ethiopic', -apple-system, sans-serif;
+            background-color: #e2e8f0;
+            color: #0f172a;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .certificate-frame {
+            max-width: 850px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 10px double #1e3a8a;
+            outline: 2px solid #d97706;
+            outline-offset: -6px;
+            padding: 40px 50px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        /* Official Background Watermark */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 7.5rem;
+            color: rgba(30, 58, 138, 0.03);
+            font-weight: 700;
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .cert-header {
+            border-bottom: 2px solid #1e3a8a;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .cert-title-amharic {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            letter-spacing: 1px;
+        }
+
+        .cert-title-english {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #d97706;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Passport Photo Holder */
+        .child-photo-box {
+            width: 125px;
+            height: 145px;
+            border: 2px solid #1e3a8a;
+            padding: 3px;
+            background: #ffffff;
+            border-radius: 4px;
+            object-fit: cover;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .photo-placeholder {
+            width: 125px;
+            height: 145px;
+            border: 2px dashed #94a3b8;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 0.75rem;
+            text-align: center;
+            background-color: #f8fafc;
+        }
+
+        /* Certificate Particulars Table */
+        .table-cert th {
+            width: 32%;
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-size: 0.85rem;
+            font-weight: 600;
+            vertical-align: middle;
+            border-color: #cbd5e1;
+        }
+
+        .table-cert td {
+            font-size: 0.95rem;
+            color: #0f172a;
+            vertical-align: middle;
+            border-color: #cbd5e1;
+        }
+
+        .qr-code-img {
+            width: 110px;
+            height: 110px;
+            border: 1px solid #cbd5e1;
+            padding: 3px;
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        .official-seal-box {
+            width: 115px;
+            height: 115px;
+            border: 2px dashed #d97706;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d97706;
+            font-size: 0.72rem;
+            font-weight: bold;
+            text-align: center;
+            margin: auto;
+            background: rgba(217, 119, 6, 0.03);
+        }
+
+        /* Hide elements during print */
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+            }
+            .certificate-frame {
+                box-shadow: none !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border: 8px double #1e3a8a !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Control Header Bar (Hidden during printing) -->
+    <div class="container max-width-850 no-print my-3">
+        <div class="card p-3 shadow-sm border-0 d-flex flex-row justify-content-between align-items-center">
+            <div>
+                <span class="badge bg-success fs-6">Status: {{ registration.get_status_display }}</span>
+                <span class="ms-2 fw-bold text-secondary">ID: {{ registration.formatted_id }}</span>
+            </div>
+            <div class="d-flex gap-2">
+                <button onclick="window.print()" class="btn btn-primary fw-bold px-4">
+                    🖨️ Print Certificate
+                </button>
+                <a href="{% url 'registrar_dashboard' %}" class="btn btn-outline-secondary">
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Official Certificate Frame -->
+    <main class="certificate-frame">
+        <div class="watermark">CRRSA ETHIOPIA</div>
+
+        <!-- Top Header & Authority Crest -->
+        <header class="row align-items-center cert-header">
+            <div class="col-3 text-center">
+                <!-- Child Passport Photo -->
+                {% if registration.child_photo %}
+                    <img src="{{ registration.child_photo.url }}" alt="Child Photo" class="child-photo-box">
+                {% else %}
+                    <div class="photo-placeholder">
+                        PASSPORT PHOTO<br>የሕፃኑ ፎቶግራፍ
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-6 text-center">
+                <h5 class="fw-bold mb-1 text-uppercase" style="color: #0f172a; font-size: 1.1rem;">
+                    የፌደራል ሲቪል ምዝገባ እና የነዋሪነት አገልግሎት ኤጀንሲ
+                </h5>
+                <h6 class="fw-semibold text-muted mb-2" style="font-size: 0.85rem;">
+                    Civil Registration and Residence Service Agency (CRRSA)
+                </h6>
+                <div class="cert-title-amharic">የልደት ምስክር ወረቀት</div>
+                <div class="cert-title-english">Official Birth Certificate</div>
+            </div>
+
+            <div class="col-3 text-center">
+                <!-- Registration Number Badge -->
+                <div class="p-2 border border-primary rounded bg-light">
+                    <div class="text-muted small">ቁጥር / Certificate No.</div>
+                    <strong class="text-primary fs-6">{{ registration.formatted_id }}</strong>
+                </div>
+            </div>
+        </header>
+
+        <!-- Particulars Details Table -->
+        <table class="table table-bordered table-cert mb-4">
+            <tbody>
+                <tr>
+                    <th scope="row">
+                        የሕፃኑ ሙሉ ስም<br>
+                        <span class="text-muted fw-normal">Child Full Name</span>
+                    </th>
+                    <td>
+                        <strong class="fs-6 text-dark d-block">{{ registration.child_full_name_amharic }}</strong>
+                        <span class="text-secondary fw-semibold">{{ registration.child_full_name_english }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        ጾታ እና የትውልድ ቀን<br>
+                        <span class="text-muted fw-normal">Sex & Date of Birth</span>
+                    </th>
+                    <td>
+                        <strong>{{ registration.get_sex_display }}</strong> &nbsp;|&nbsp; 
+                        <span class="fw-bold text-primary">
+                            {{ registration.birth_day }}/{{ registration.birth_month }}/{{ registration.birth_year_ec }} ዓ.ም.
+                        </span>
+                        <span class="text-muted small">({{ registration.birth_year_gc }} G.C.)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        የአባት ሙሉ ስም<br>
+                        <span class="text-muted fw-normal">Father Full Name</span>
+                    </th>
+                    <td>
+                        <strong>{{ registration.father_name_amharic }}</strong><br>
+                        <span class="text-muted small">{{ registration.father_name_english }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        የእናት ሙሉ ስም<br>
+                        <span class="text-muted fw-normal">Mother Full Name</span>
+                    </th>
+                    <td>
+                        <strong>{{ registration.mother_name_amharic }}</strong><br>
+                        <span class="text-muted small">{{ registration.mother_name_english }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        የትውልድ ቦታ / አስተዳደር<br>
+                        <span class="text-muted fw-normal">Place of Birth</span>
+                    </th>
+                    <td>
+                        {{ registration.subcity }} Subcity, Woreda {{ registration.woreda }}<br>
+                        <span class="text-muted small">Health Facility: {{ registration.hospital_org_name }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        የምዝገባ ቦታ እና ቀን<br>
+                        <span class="text-muted fw-normal">Registration Date & Place</span>
+                    </th>
+                    <td>
+                        <strong>Addis Ababa, Ethiopia</strong> &nbsp;|&nbsp; {% now "F j, Y" %} G.C.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Footer Signatures & Dynamic QR Verification -->
+        <footer class="row align-items-end mt-4 pt-3">
+            <!-- Dynamic QR Code -->
+            <div class="col-4 text-center">
+                <img src="https://quickchart.io/qr?text={{ request.scheme }}://{{ request.get_host }}{% url 'verify_certificate' registration.pk %}&size=150" 
+                     alt="Verification QR Code" 
+                     class="qr-code-img mb-1">
+                <div style="font-size: 0.68rem;" class="text-muted fw-semibold">
+                    Scan to Verify Authenticity<br>ትክክለኛነቱን በስልክ ያረጋግጡ
+                </div>
+            </div>
+
+            <!-- Official Stamp Placeholder -->
+            <div class="col-4 text-center">
+                <div class="official-seal-box">
+                    OFFICIAL SEAL /<br>የኤጀንሲው ማህተም
+                </div>
+            </div>
+
+            <!-- Officer Signature Block -->
+            <div class="col-4 text-center">
+                <div class="border-bottom border-dark mb-2 pb-4" style="width: 80%; margin: auto;"></div>
+                <div class="fw-bold small">የመዝጋቢው መኮንን ፊርማ</div>
+                <div class="text-muted" style="font-size: 0.72rem;">Registrar Officer Signature</div>
+            </div>
+        </footer>
+    </main>
+
+</body>
+</html>

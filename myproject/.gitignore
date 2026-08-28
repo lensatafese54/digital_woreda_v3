@@ -1,0 +1,18 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Database (Keeps your local data private)
+db.sqlite3
+
+# Uploaded test photos & documents
+media/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Editor settings
+.vscode/
+.idea/

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Woreda - Birth Registration Portal</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            background-color: #f8fafc;
+        }
+        .main-header {
+            background-color: #1a365d;
+        }
+        .card-custom {
+            border-radius: 12px;
+            border: none;
+        }
+        .form-section-title {
+            color: #1a365d;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .required-star {
+            color: #dc3545;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-left: 2px;
+        }
+        .preview-img {
+            max-height: 80px;
+            border-radius: 6px;
+            margin-top: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark main-header shadow-sm">
+        <div class="container px-4">
+            <a class="navbar-brand fw-bold" href="{% url 'index' %}">
+                🏛️ Digital Woreda | የልደት ምዝገባ እና ማረጋገጫ
+            </a>
+            <div class="ms-auto">
+                {% if user.is_authenticated and user.is_staff %}
+                    <a href="{% url 'registrar_dashboard' %}" class="btn btn-warning btn-sm fw-bold">Registrar Dashboard / ዳሽቦርድ</a>
+                {% else %}
+                    <a href="/admin/login/" class="btn btn-outline-light btn-sm">Registrar Login / መግቢያ</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container my-5 px-4">
+
+        <!-- ALERT MESSAGES -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show fw-bold shadow-sm mb-4" role="alert">
+                    <span class="me-2">{% if message.tags == 'error' %}⚠️{% else %}ℹ️{% endif %}</span> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- SEARCH SECTION -->
+        <div class="card card-custom shadow-sm p-4 bg-white mb-5">
+            <h4 class="fw-bold text-dark mb-3">🔍 Search Verified Registration / የተመዘገቡ መዝገቦችን ይፈልጉ</h4>
+            <form method="GET" action="{% url 'index' %}" class="row g-2">
+                <div class="col-md-9">
+                    <input type="text" name="search_name" class="form-control form-control-lg" placeholder="Enter Child Name or Registration ID..." value="{{ search_query|default:'' }}">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">Search / ፈልግ</button>
+                </div>
+            </form>
+
+            <!-- SEARCH RESULTS TABLE -->
+            {% if search_results is not None %}
+                <div class="mt-4">
+                    <h5 class="fw-bold">Search Results:</h5>
+                    {% if search_results %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle border mt-2">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Registration ID</th>
+                                        <th>Child Name</th>
+                                        <th>Parents</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in search_results %}
+                                        <tr>
+                                            <td class="fw-bold text-primary">CRRSA-{{ item.pk|stringformat:"05d" }}</td>
+                                            <td>{{ item.child_full_name_amharic }} <br><small class="text-muted">{{ item.child_full_name_english }}</small></td>
+                                            <td><small>F: {{ item.father_name_english }}<br>M: {{ item.mother_name_english }}</small></td>
+                                            <td>
+                                                {% if item.status == 'APPROVED' %}
+                                                    <span class="badge bg-success">Approved</span>
+                                                {% elif item.status == 'REJECTED' %}
+                                                    <span class="badge bg-danger">Rejected</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning text-dark">Pending</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if item.status == 'APPROVED' %}
+                                                    <a href="{% url 'print_certificate' item.pk %}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary fw-bold">🖨️ View Certificate</a>
+                                                {% else %}
+                                                    <span class="text-muted small">Pending Approval</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning mb-0 mt-2">No registration records found for "{{ search_query }}".</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- NEW BIRTH REGISTRATION FORM -->
+        <div class="card card-custom shadow-sm p-4 bg-white">
+            <h3 class="fw-bold text-dark mb-1">📝 Birth Registration Application / የልደት ምዝገባ ቅጽ</h3>
+            <p class="text-muted small mb-4">All fields marked with (<span class="required-star">*</span>) are mandatory per Woreda legal regulations.</p>
+
+            <form method="POST" action="{% url 'index' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+
+                <!-- SECTION 1: CHILD DETAILS -->
+                <h5 class="form-section-title">1. Child Details / የሕፃኑ መረጃ</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Child Name (Amharic) / የሕፃኑ ስም (በአማርኛ) <span class="required-star">*</span></label>
+                        <input type="text" name="child_full_name_amharic" class="form-control" value="{{ form_data.child_full_name_amharic|default:'' }}" required>
+                        <div class="invalid-feedback">Please enter the child's name in Amharic.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Child Name (English) <span class="required-star">*</span></label>
+                        <input type="text" name="child_full_name_english" class="form-control" value="{{ form_data.child_full_name_english|default:'' }}" required>
+                        <div class="invalid-feedback">Please enter the child's name in English.</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Sex / ጾታ <span class="required-star">*</span></label>
+                        <select name="sex" class="form-select" required>
+                            <option value="">Select...</option>
+                            <option value="M" {% if form_data.sex == 'M' %}selected{% endif %}>Male / ወንድ</option>
+                            <option value="F" {% if form_data.sex == 'F' %}selected{% endif %}>Female / ሴት</option>
+                        </select>
+                        <div class="invalid-feedback">Please select sex.</div>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Day / ቀን <span class="required-star">*</span></label>
+                        <input type="number" name="birth_day" id="birth_day" class="form-control" min="1" max="30" value="{{ form_data.birth_day|default:'' }}" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Month / ወር <span class="required-star">*</span></label>
+                        <input type="number" name="birth_month" id="birth_month" class="form-control" min="1" max="13" value="{{ form_data.birth_month|default:'' }}" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Year (E.C) <span class="required-star">*</span></label>
+                        <input type="number" name="birth_year_ec" id="birth_year_ec" class="form-control" placeholder="e.g. 2016" value="{{ form_data.birth_year_ec|default:'' }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Year (G.C) <span class="required-star">*</span></label>
+                        <input type="number" name="birth_year_gc" id="birth_year_gc" class="form-control" placeholder="Auto-calculated" value="{{ form_data.birth_year_gc|default:'' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Subcity / ክፍለ ከተማ <span class="required-star">*</span></label>
+                        <input type="text" name="subcity" class="form-control" value="{{ form_data.subcity|default:'' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Woreda / ወረዳ <span class="required-star">*</span></label>
+                        <input type="text" name="woreda" class="form-control" value="{{ form_data.woreda|default:'' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Hospital/Facility Name <span class="required-star">*</span></label>
+                        <input type="text" name="hospital_org_name" class="form-control" value="{{ form_data.hospital_org_name|default:'' }}" required>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: PARENTS INFORMATION -->
+                <h5 class="form-section-title">2. Parents Information / የወላጆች መረጃ</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Father Name (Amharic) / የአባት ስም (በአማርኛ) <span class="required-star">*</span></label>
+                        <input type="text" name="father_name_amharic" class="form-control" value="{{ form_data.father_name_amharic|default:'' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Father Name (English) <span class="required-star">*</span></label>
+                        <input type="text" name="father_name_english" class="form-control" value="{{ form_data.father_name_english|default:'' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Mother Name (Amharic) / የእናት ስም (በአማርኛ) <span class="required-star">*</span></label>
+                        <input type="text" name="mother_name_amharic" class="form-control" value="{{ form_data.mother_name_amharic|default:'' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Mother Name (English) <span class="required-star">*</span></label>
+                        <input type="text" name="mother_name_english" class="form-control" value="{{ form_data.mother_name_english|default:'' }}" required>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: DECLARANT / APPLICANT DETAILS -->
+                <h5 class="form-section-title">3. Declarant / Applicant Details / አመልካች መረጃ</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Applicant Name (Amharic) / የአመልካች ስም (በአማርኛ) <span class="required-star">*</span></label>
+                        <input type="text" name="applicant_name_amharic" class="form-control" value="{{ form_data.applicant_name_amharic|default:'' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Applicant Name (English) <span class="required-star">*</span></label>
+                        <input type="text" name="applicant_name_english" class="form-control" value="{{ form_data.applicant_name_english|default:'' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Relation / ዝምድና <span class="required-star">*</span></label>
+                        <input type="text" name="applicant_relation" class="form-control" placeholder="e.g. Father / Mother" value="{{ form_data.applicant_relation|default:'' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Applicant Age / እድሜ <span class="required-star">*</span></label>
+                        <input type="number" name="applicant_age" class="form-control" min="18" max="120" value="{{ form_data.applicant_age|default:'' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Phone Number / ስልክ ቁጥር <span class="required-star">*</span></label>
+                        <input type="tel" name="applicant_phone" class="form-control" placeholder="09..." value="{{ form_data.applicant_phone|default:'' }}" required>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: DOCUMENT UPLOADS -->
+                <h5 class="form-section-title">4. Document Uploads / ማስረጃዎች</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Child Photo / የሕፃኑ ፎቶ <span class="required-star">*</span></label>
+                        <input type="file" name="child_photo" class="form-control file-preview-input" accept="image/*" required>
+                        <img class="preview-img border shadow-sm mt-2" alt="Child Preview">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Hospital Birth Notification Doc <span class="required-star">*</span></label>
+                        <input type="file" name="hospital_document" class="form-control file-preview-input" accept="image/*,.pdf" required>
+                        <img class="preview-img border shadow-sm mt-2" alt="Hospital Doc Preview">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Father ID / Photo <span class="required-star">*</span></label>
+                        <input type="file" name="father_photo" class="form-control file-preview-input" accept="image/*" required>
+                        <img class="preview-img border shadow-sm mt-2" alt="Father ID Preview">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Mother ID / Photo <span class="required-star">*</span></label>
+                        <input type="file" name="mother_photo" class="form-control file-preview-input" accept="image/*" required>
+                        <img class="preview-img border shadow-sm mt-2" alt="Mother ID Preview">
+                    </div>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <div class="text-end border-top pt-3">
+                    <button type="submit" name="submit_registration" value="true" class="btn btn-success btn-lg px-5 fw-bold shadow-sm">
+                        Submit Registration / መዝግብ
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- CLIENT-SIDE VALIDATION, IMAGE PREVIEWS & DATE CALCULATION -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Bootstrap Client-Side Validation Trigger
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+            // Improved Ethiopian Year (E.C) to Gregorian Year (G.C) Calculation
+            const ecYearInput = document.getElementById('birth_year_ec');
+            const ecMonthInput = document.getElementById('birth_month');
+            const gcYearInput = document.getElementById('birth_year_gc');
+
+            function updateGCYear() {
+                const ecYear = parseInt(ecYearInput.value, 10);
+                const ecMonth = parseInt(ecMonthInput.value, 10) || 1;
+
+                if (ecYear && ecYear > 1900 && ecYear < 2100) {
+                    // Ethiopian New Year (Meskerem 1) occurs in September (G.C.)
+                    // Months 1-4 (Meskerem-Tahsas) map to +7 years (Sept-Dec)
+                    // Months 5-13 (Tir-Pagume) map to +8 years (Jan-Sept)
+                    const offset = (ecMonth >= 1 && ecMonth <= 4) ? 7 : 8;
+                    gcYearInput.value = ecYear + offset;
+                }
+            }
+
+            if (ecYearInput && gcYearInput) {
+                ecYearInput.addEventListener('input', updateGCYear);
+                if (ecMonthInput) ecMonthInput.addEventListener('change', updateGCYear);
+            }
+
+            // Image File Previews
+            const fileInputs = document.querySelectorAll('.file-preview-input');
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    const file = this.files[0];
+                    const imgPreview = this.nextElementSibling;
+                    if (file && file.type.startsWith('image/') && imgPreview && imgPreview.classList.contains('preview-img')) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            imgPreview.src = e.target.result;
+                            imgPreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else if (imgPreview && imgPreview.classList.contains('preview-img')) {
+                        imgPreview.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

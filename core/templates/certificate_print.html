@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Birth Certificate - {{ registration.child_full_name_english|default:"Certificate" }}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts for Ethiopic & Serif Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            background-color: #f0f2f5; 
+            font-family: 'Noto Sans Ethiopic', 'Times New Roman', serif; 
+            margin: 0;
+            padding: 0;
+        }
+        .cert-container {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 10px double #1b365d;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            position: relative;
+            box-sizing: border-box;
+        }
+        .header-title { 
+            color: #1b365d; 
+            text-transform: uppercase; 
+            font-weight: bold; 
+        }
+        .photo-box {
+            width: 110px;
+            height: 130px;
+            border: 2px solid #1b365d;
+            object-fit: cover;
+            background-color: #e9ecef;
+        }
+        .table-cert th { 
+            background-color: #f4f6f9; 
+            color: #1b365d; 
+            width: 35%; 
+            font-weight: bold; 
+        }
+        .qr-box img { 
+            width: 110px; 
+            height: 110px; 
+        }
+        
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+        @media print {
+            html, body {
+                background: #ffffff;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .no-print { 
+                display: none !important; 
+            }
+            .cert-container { 
+                margin: 0 auto !important; 
+                border: 8px double #1b365d !important; 
+                box-shadow: none !important; 
+                width: 100% !important; 
+                min-height: 100vh !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Action Toolbar (Hidden during printing) -->
+    <div class="text-center my-3 no-print">
+        <button onclick="window.print()" class="btn btn-primary btn-lg shadow fw-bold px-4">
+            🖨️ Print Certificate / ማተሚያ
+        </button>
+        <a href="{% url 'index' %}" class="btn btn-secondary btn-lg ms-2">Back to Home</a>
+    </div>
+
+    <!-- MAIN CERTIFICATE CANVAS -->
+    <div class="cert-container">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-3">
+            <h4 class="fw-bold mb-1">የኢትዮጵያ ፌዴራላዊ ዴሞክራሲያዊ ሪፐብሊክ</h4>
+            <h5 class="fw-bold text-muted mb-2">FEDERAL DEMOCRATIC REPUBLIC OF ETHIOPIA</h5>
+            <h3 class="header-title my-2">የልደት ምስክር ወረቀት</h3>
+            <h4 class="header-title text-decoration-underline">BIRTH CERTIFICATE</h4>
+            <p class="mb-0 fw-bold fs-6">Registration No / የምዝገባ ቁጥር: <span class="text-danger">ETH-BR-{{ registration.pk|stringformat:"06d" }}</span></p>
+        </div>
+
+        <hr style="border-top: 2px solid #1b365d; opacity: 1;">
+
+        <!-- Photos Section -->
+        <div class="d-flex justify-content-around text-center my-3">
+            <div>
+                {% if registration.child_photo %}
+                    <img src="{{ registration.child_photo.url }}" class="photo-box rounded" alt="Child Photo">
+                {% else %}
+                    <div class="photo-box rounded d-flex align-items-center justify-content-center text-muted small">Child Photo</div>
+                {% endif %}
+                <div class="fw-bold mt-1 small">ሕፃኑ / Child</div>
+            </div>
+            <div>
+                {% if registration.father_photo %}
+                    <img src="{{ registration.father_photo.url }}" class="photo-box rounded" alt="Father Photo">
+                {% else %}
+                    <div class="photo-box rounded d-flex align-items-center justify-content-center text-muted small">Father Photo</div>
+                {% endif %}
+                <div class="fw-bold mt-1 small">አባት / Father</div>
+            </div>
+            <div>
+                {% if registration.mother_photo %}
+                    <img src="{{ registration.mother_photo.url }}" class="photo-box rounded" alt="Mother Photo">
+                {% else %}
+                    <div class="photo-box rounded d-flex align-items-center justify-content-center text-muted small">Mother Photo</div>
+                {% endif %}
+                <div class="fw-bold mt-1 small">እናት / Mother</div>
+            </div>
+        </div>
+
+        <!-- Official Details Table -->
+        <table class="table table-bordered table-cert my-3 align-middle">
+            <tbody>
+                <tr>
+                    <th>Child's Full Name / የሕፃኑ ሙሉ ስም:</th>
+                    <td>
+                        <strong class="fs-5">{{ registration.child_full_name_amharic|default:"-" }}</strong><br>
+                        <span class="text-muted fw-bold">{{ registration.child_full_name_english|default:"-" }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Sex / ፆታ:</th>
+                    <td>{{ registration.get_sex_display|default:registration.sex|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th>Date of Birth / የተወለደበት ቀን:</th>
+                    <td>
+                        <strong>{{ registration.birth_day }}/{{ registration.birth_month }}/{{ registration.birth_year_ec }} E.C</strong> 
+                        {% if registration.birth_year_gc %}({{ registration.birth_year_gc }} G.C){% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Place of Birth / የተወለደበት ቦታ:</th>
+                    <td>{{ registration.hospital_org_name|default:"-" }} (Subcity: {{ registration.subcity|default:"-" }}, Woreda: {{ registration.woreda|default:"-" }})</td>
+                </tr>
+                <tr>
+                    <th>Father's Full Name / የአባት ሙሉ ስም:</th>
+                    <td>{{ registration.father_name_amharic|default:"-" }} / {{ registration.father_name_english|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th>Mother's Full Name / የእናት ሙሉ ስም:</th>
+                    <td>{{ registration.mother_name_amharic|default:"-" }} / {{ registration.mother_name_english|default:"-" }}</td>
+                </tr>
+                <!-- Applicant Details Row -->
+                <tr>
+                    <th>Applicant Details / የአመልካች መረጃ:</th>
+                    <td>
+                        <strong>{{ registration.applicant_name_amharic|default:"N/A" }}</strong> 
+                        {% if registration.applicant_name_english %}({{ registration.applicant_name_english }}){% endif %}
+                        <br>
+                        <small class="text-muted">
+                            Relation: <strong>{{ registration.applicant_relation|default:"N/A" }}</strong> | 
+                            Age: <strong>{{ registration.applicant_age|default:"N/A" }}</strong> | 
+                            Phone: <strong>{{ registration.applicant_phone|default:"N/A" }}</strong>
+                        </small>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Security & QR Footer -->
+        <div class="row align-items-end mt-4 pt-2">
+            <div class="col-8">
+                <p class="mb-1"><strong>Status / ደረጃ:</strong> <span class="badge bg-success fs-6">{{ registration.status|default:"APPROVED" }}</span></p>
+                <p class="mb-1 small"><strong>Issued Date / የተሰጠበት ቀን:</strong> {{ registration.created_at|date:"D, d M Y" }}</p>
+                <br>
+                <p class="mb-0">__________________________________________</p>
+                <p class="fw-bold small mb-0">Registrar Signature & Seal / የሬጅስትራሩ ፊርማ እና ማኅተም</p>
+            </div>
+            <div class="col-4 text-center qr-box">
+                {% if qr_code %}
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Verification Code" class="img-fluid border p-1 rounded">
+                    <div class="small fw-bold mt-1 text-muted">Scan to Verify</div>
+                {% else %}
+                    <div class="border p-2 small text-muted rounded">QR Code Verification</div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

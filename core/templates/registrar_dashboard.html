@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birth Registration Form - የልደት ምዝገባ ፎርም</title>
+    
+    <!-- Bootstrap 5 CSS & Ethiopic Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            font-family: 'Noto Sans Ethiopic', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        /* Banner Card */
+        .agency-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            border-bottom: 4px solid #d97706;
+            color: #ffffff;
+            border-radius: 16px 16px 0 0;
+            padding: 30px 20px;
+        }
+
+        .form-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: none;
+            overflow: hidden;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        /* Section Cards Inside Form */
+        .section-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #1e3a8a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            color: #1e3a8a;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Input Controls Styling */
+        .form-label {
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .sub-label {
+            display: block;
+            font-size: 0.78rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            border: none;
+            color: white;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container pt-4">
+    <div class="form-card">
+        
+        <!-- Agency Header -->
+        <header class="agency-header text-center">
+            <h4 class="fw-bold mb-1">የፌደራል ሲቪል ምዝገባ እና የነዋሪነት አገልግሎት ኤጀንሲ</h4>
+            <p class="mb-2 text-warning fw-semibold" style="font-size: 0.9rem;">Civil Registration & Resident Service Agency</p>
+            <h3 class="fw-bold text-white mt-3 mb-0">የልደት ምዝገባ ማመልከቻ ፎርም</h3>
+            <span class="badge bg-warning text-dark px-3 py-2 mt-2 fs-6">Birth Registration Application</span>
+        </header>
+
+        <form method="POST" enctype="multipart/form-data" class="p-4 p-md-5">
+            {% csrf_token %}
+
+            <!-- SECTION 1: Child Information -->
+            <div class="section-box">
+                <div class="section-title">
+                    <i class="bi bi-person-fill fs-4">
+                    <span>1. የሕፃኑ መረጃ / Child Information</span>
+                </div>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            የሕፃኑ ሙሉ ስም (በአማርኛ)
+                            <span class="sub-label">Child Full Name (Amharic)</span>
+                        </label>
+                        <input type="text" name="child_full_name_amharic" class="form-control" placeholder="ምሳሌ፡ አበበ ከበደ አለሙ" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            የሕፃኑ ሙሉ ስም (በእንግሊዝኛ)
+                            <span class="sub-label">Child Full Name (English)</span>
+                        </label>
+                        <input type="text" name="child_full_name_english" class="form-control" placeholder="e.g. Abebe Kebede Alemu" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            ጾታ
+                            <span class="sub-label">Sex</span>
+                        </label>
+                        <select name="sex" class="form-select" required>
+                            <option value="" selected disabled>ምረጥ / Select</option>
+                            <option value="M">ወንድ / Male</option>
+                            <option value="F">ሴት / Female</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label">
+                            የትውልድ ቀን (በኢትዮጵያ ዘመን አቆጣጠር)
+                            <span class="sub-label">Date of Birth (E.C.)</span>
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <input type="number" name="birth_day" class="form-control" placeholder="ቀን (Day)" min="1" max="30" required>
+                            </div>
+                            <div class="col-4">
+                                <input type="number" name="birth_month" class="form-control" placeholder="ወር (Month)" min="1" max="13" required>
+                            </div>
+                            <div class="col-4">
+                                <input type="number" name="birth_year_ec" class="form-control" placeholder="ዓ.ም (Year)" min="1900" max="2020" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <label class="form-label">
+                            የሕፃኑ ፎቶግራፍ (የፓስፖርት መጠን)
+                            <span class="sub-label">Child Passport Photo Upload</span>
+                        </label>
+                        <input type="file" name="child_photo" class="form-control" accept="image/*">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: Parents Information -->
+            <div class="section-box">
+                <div class="section-title">
+                    <i class="bi bi-people-fill fs-4">
+                    <span>2. የወላጆች መረጃ / Parents Information</span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            የአባት ሙሉ ስም (በአማርኛ)
+                            <span class="sub-label">Father Full Name (Amharic)</span>
+                        </label>
+                        <input type="text" name="father_name_amharic" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            የአባት ሙሉ ስም (በእንግሊዝኛ)
+                            <span class="sub-label">Father Full Name (English)</span>
+                        </label>
+                        <input type="text" name="father_name_english" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            የእናት ሙሉ ስም (በአማርኛ)
+                            <span class="sub-label">Mother Full Name (Amharic)</span>
+                        </label>
+                        <input type="text" name="mother_name_amharic" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            የእናት ሙሉ ስም (በእንግሊዝኛ)
+                            <span class="sub-label">Mother Full Name (English)</span>
+                        </label>
+                        <input type="text" name="mother_name_english" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Birth Location & Contact -->
+            <div class="section-box">
+                <div class="section-title">
+                    <i class="bi bi-geo-alt-fill fs-4">
+                    <span>3. የትውልድ ቦታ እና ስልክ / Location & Contact</span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            ክፍለ ከተማ
+                            <span class="sub-label">Subcity</span>
+                        </label>
+                        <input type="text" name="subcity" class="form-control" placeholder="e.g. Bole" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            ወረዳ
+                            <span class="sub-label">Woreda</span>
+                        </label>
+                        <input type="text" name="woreda" class="form-control" placeholder="e.g. 03" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            የሆስፒታል/ጤና ጣቢያ ስም
+                            <span class="sub-label">Health Facility Name</span>
+                        </label>
+                        <input type="text" name="hospital_org_name" class="form-control" placeholder="e.g. Zewditu Hospital" required>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label text-primary fw-bold">
+                            የአመልካች ስልክ ቁጥር (የኤስኤምኤስ መልእክት የሚላክበት)
+                            <span class="sub-label text-muted">Applicant Phone Number (for SMS Alerts)</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light fw-bold">+251</span>
+                            <input type="tel" name="applicant_phone" class="form-control" placeholder="912345678" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-submit w-100 py-3">
+                    <i class="bi bi-send-check-fill me-2"></i> ማመልከቻውን አስገባ / Submit Application
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
