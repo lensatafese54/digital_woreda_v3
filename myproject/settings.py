@@ -30,7 +30,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 CSRF_TRUSTED_ORIGINS = [
     f"https://{host.strip()}"
-    for host in os.getenv('ALLOWED_HOSTS', '').split(',')
+    for host in os.getenv('ALLOWED_HOSTS', 'digitalworedav3-production.up.railway.app').split(',')
     if host.strip()
 ]
 
