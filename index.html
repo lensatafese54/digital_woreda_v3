@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Woreda — Birth Registration Portal</title>
+  <meta name="description" content="A modern, bilingual digital birth registration system for Addis Ababa Woreda offices. Submit applications online, track status, and download QR-verified certificates." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0d1b3e;
+      --blue:   #1a56db;
+      --gold:   #f59e0b;
+      --green:  #10b981;
+      --light:  #f0f4ff;
+      --text:   #1e293b;
+      --muted:  #64748b;
+      --white:  #ffffff;
+      --radius: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', 'Noto Sans Ethiopic', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--navy);
+      text-decoration: none;
+    }
+
+    .nav-brand .flag { font-size: 1.4rem; }
+
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--blue); }
+
+    .nav-cta {
+      background: var(--blue);
+      color: var(--white) !important;
+      padding: 8px 20px;
+      border-radius: 8px;
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: #1240a8 !important; color: var(--white) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #1a3a6b 60%, #1e4d8c 100%);
+      color: var(--white);
+      padding: 100px 5% 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 span { color: var(--gold); }
+
+    .hero-amharic {
+      font-family: 'Noto Sans Ethiopic', sans-serif;
+      font-size: 1.05rem;
+      opacity: 0.75;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.85;
+      max-width: 620px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: 9px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.18); }
+
+    .btn-primary { background: var(--gold); color: #1a1200; }
+    .btn-outline  { background: transparent; color: var(--white); border: 2px solid rgba(255,255,255,0.5); }
+    .btn-outline:hover { border-color: var(--white); }
+
+    /* ── TRUST BAR ── */
+    .trust-bar {
+      background: var(--light);
+      border-top: 1px solid #dde3f0;
+      border-bottom: 1px solid #dde3f0;
+      padding: 18px 5%;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .trust-item .icon { font-size: 1.1rem; }
+
+    /* ── SECTIONS ── */
+    section { padding: 80px 5%; }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+
+    .section-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 540px;
+    }
+
+    .section-header { margin-bottom: 52px; }
+    .section-header.center { text-align: center; }
+    .section-header.center .section-sub { margin: 0 auto; }
+
+    /* ── HOW IT WORKS ── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 32px;
+      counter-reset: steps;
+    }
+
+    .step {
+      background: var(--white);
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .step:hover { box-shadow: 0 8px 30px rgba(26,86,219,0.1); transform: translateY(-3px); }
+
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .step h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .step p  { font-size: 0.88rem; color: var(--muted); }
+
+    /* ── FEATURES ── */
+    #features { background: var(--light); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 28px;
+      border: 1px solid #e2e8f0;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .feature-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); transform: translateY(-2px); }
+
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: 14px;
+    }
+
+    .feature-card h3 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .feature-card p  { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── STACK ── */
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .badge-blue   { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .badge-green  { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+    .badge-purple { background: #faf5ff; color: #7e22ce; border-color: #e9d5ff; }
+    .badge-amber  { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+    .badge-slate  { background: #f8fafc; color: #475569; border-color: #cbd5e1; }
+
+    /* ── SETUP ── */
+    .setup-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .setup-card {
+      background: var(--navy);
+      color: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .setup-card .num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .setup-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+
+    .setup-card code {
+      display: block;
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-family: 'Courier New', monospace;
+      margin-top: 10px;
+      color: #7dd3fc;
+    }
+
+    /* ── ROLES ── */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .role-card {
+      border-radius: var(--radius);
+      padding: 32px;
+      border: 2px solid;
+    }
+
+    .role-card.citizen { border-color: var(--blue); background: #eff6ff; }
+    .role-card.admin   { border-color: var(--gold); background: #fffbeb; }
+
+    .role-card h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .role-card ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+    .role-card li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .role-card li::before {
+      content: '✓';
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .role-card.citizen li::before { color: var(--blue); }
+    .role-card.admin   li::before { color: #d97706; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      padding: 48px 5%;
+    }
+
+    footer .footer-brand {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    footer .footer-amharic {
+      font-family: 'Noto Sans Ethiopic', sans-serif;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+
+    footer .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      list-style: none;
+    }
+
+    footer .footer-links a {
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    footer .footer-links a:hover { color: var(--white); }
+
+    footer .footer-copy { font-size: 0.8rem; opacity: 0.45; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      nav { padding: 0 4%; }
+      .nav-links { display: none; }
+      .hero { padding: 70px 4% 60px; }
+      section { padding: 60px 4%; }
+      .trust-bar { gap: 20px; padding: 16px 4%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-brand" href="#">
+      <span class="flag">🏛️</span>
+      Digital Woreda
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#stack">Tech Stack</a></li>
+      <li><a href="#setup">Setup</a></li>
+      <li><a href="https://github.com" target="_blank" rel="noopener" class="nav-cta">View on GitHub</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">🇪🇹 Open Source · Addis Ababa Woreda Offices</div>
+    <h1>Digital <span>Birth Registration</span><br />for Ethiopia</h1>
+    <p class="hero-amharic">የፌደራል ሲቪል ምዝገባ እና የነዋሪነት አገልግሎት ኤጀንሲ</p>
+    <p>
+      A modern, bilingual (Amharic / English) portal that lets citizens submit
+      birth registrations online, track approval status, and download
+      QR-verified official certificates — without visiting a government office.
+    </p>
+    <div class="hero-btns">
+      <a href="#setup" class="btn btn-primary">🚀 Get Started</a>
+      <a href="#features" class="btn btn-outline">Explore Features</a>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-item"><span class="icon">🐍</span> Django 6.1 · Python 3.14</div>
+    <div class="trust-item"><span class="icon">🌐</span> Bilingual UI (Amharic / English)</div>
+    <div class="trust-item"><span class="icon">🔒</span> Role-based access control</div>
+    <div class="trust-item"><span class="icon">📄</span> QR-verified certificates</div>
+    <div class="trust-item"><span class="icon">🌙</span> Dark / Light mode</div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="section-header center">
+      <p class="section-label">Workflow</p>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-sub">Three simple steps from application to certified document.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Citizen Registers Online</h3>
+        <p>Fill in child, parent, and location details. Upload supporting documents and photos.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Woreda Registrar Reviews</h3>
+        <p>The admin reviews the submission through the dashboard and approves or rejects with a reason.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Certificate Issued</h3>
+        <p>An official printable certificate is generated with a unique QR code for instant verification.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section-header center">
+      <p class="section-label">Capabilities</p>
+      <h2 class="section-title">Everything You Need</h2>
+      <p class="section-sub">Built for citizens and registrars alike, with security at every layer.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>4-Section Birth Form</h3>
+        <p>Structured form covering Child Info, Parents, Location, and Applicant details — with file upload previews.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Real-time Status Tracking</h3>
+        <p>Citizens see a live dashboard showing their registrations as Pending, Approved, or Rejected.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>QR-Verified Certificates</h3>
+        <p>Approved applications generate downloadable certificates with embedded QR codes for instant authenticity checks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏛️</div>
+        <h3>Rich Admin Panel</h3>
+        <p>Jazzmin-powered Django admin with bulk approve/reject, CSV export, date hierarchy, and photo thumbnails.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>Fully Bilingual</h3>
+        <p>Every screen — forms, labels, certificates, error messages — displayed in both Amharic and English simultaneously.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Multi-Layer Security</h3>
+        <p>Admin routes return HTTP 404 to regular users, CSRF on all forms, PBKDF2 password hashing, and session flushing on logout.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>Ethiopian Calendar Support</h3>
+        <p>Built-in EC→GC conversion and Pagumē (month 13) validation — fully aware of the Ethiopian civil calendar.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌙</div>
+        <h3>Dark / Light Mode</h3>
+        <p>Persistent theme preference stored per session, available on every page of the portal.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section id="roles">
+    <div class="section-header center">
+      <p class="section-label">User Roles</p>
+      <h2 class="section-title">Two Roles, Clear Boundaries</h2>
+      <p class="section-sub">Access is enforced at every layer — from the view decorator to the database.</p>
+    </div>
+    <div class="roles-grid">
+      <div class="role-card citizen">
+        <h3>👤 Citizen (User)</h3>
+        <ul>
+          <li>Create an account via the public registration page</li>
+          <li>Submit birth registration applications</li>
+          <li>Upload child photos and hospital documents</li>
+          <li>Track application status in real time</li>
+          <li>Download approved QR-verified certificates</li>
+        </ul>
+      </div>
+      <div class="role-card admin">
+        <h3>🏛️ Registrar (Admin)</h3>
+        <ul>
+          <li>Access the secure Jazzmin admin panel</li>
+          <li>Bulk approve or reject registrations</li>
+          <li>Search by child name, parent, phone, or ID</li>
+          <li>Export filtered records to CSV</li>
+          <li>Print official certificates directly from admin</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section id="stack" style="background: var(--light);">
+    <div class="section-header center">
+      <p class="section-label">Tech Stack</p>
+      <h2 class="section-title">Built With Modern Tools</h2>
+      <p class="section-sub">Production-ready choices with a minimal footprint.</p>
+    </div>
+    <div class="stack-grid">
+      <span class="badge badge-green">🐍 Django 6.1</span>
+      <span class="badge badge-blue">🔵 Python 3.14</span>
+      <span class="badge badge-slate">🗄️ SQLite</span>
+      <span class="badge badge-blue">🎨 Bootstrap 5.3</span>
+      <span class="badge badge-purple">🖼️ Pillow 12.3</span>
+      <span class="badge badge-slate">📱 QR Code 8.2</span>
+      <span class="badge badge-amber">⚡ Jazzmin Admin</span>
+      <span class="badge badge-green">🚀 Gunicorn</span>
+      <span class="badge badge-blue">💬 Twilio SMS (optional)</span>
+      <span class="badge badge-slate">🔤 Noto Sans Ethiopic</span>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setup">
+    <div class="section-header center">
+      <p class="section-label">Quick Start</p>
+      <h2 class="section-title">Up and Running in Minutes</h2>
+      <p class="section-sub">Clone, install, migrate, and go.</p>
+    </div>
+    <div class="setup-steps">
+      <div class="setup-card">
+        <div class="num">01</div>
+        <h3>Clone & Install</h3>
+        <p style="font-size:0.85rem;opacity:0.75;margin-top:4px;">Clone the repo and install dependencies.</p>
+        <code>git clone &lt;repo-url&gt;<br/>pip install -r requirements.txt</code>
+      </div>
+      <div class="setup-card">
+        <div class="num">02</div>
+        <h3>Migrate Database</h3>
+        <p style="font-size:0.85rem;opacity:0.75;margin-top:4px;">Apply all migrations to set up the schema.</p>
+        <code>python manage.py migrate</code>
+      </div>
+      <div class="setup-card">
+        <div class="num">03</div>
+        <h3>Create Admin</h3>
+        <p style="font-size:0.85rem;opacity:0.75;margin-top:4px;">Use the management command to create the registrar account.</p>
+        <code>python manage.py create_admin</code>
+      </div>
+      <div class="setup-card">
+        <div class="num">04</div>
+        <h3>Run Server</h3>
+        <p style="font-size:0.85rem;opacity:0.75;margin-top:4px;">Start the development server and open your browser.</p>
+        <code>python manage.py runserver</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">🏛️ Digital Woreda</div>
+    <div class="footer-amharic">ዲጂታሉ የልደት ምዝገባ ፖርታል</div>
+    <ul class="footer-links">
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#setup">Setup</a></li>
+      <li><a href="https://github.com" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+    <p class="footer-copy">
+      Developed for the Federal Civil Registration &amp; Resident Service Agency (CRRSA) of Ethiopia · Made with ❤️ for Ethiopia 🇪🇹
+    </p>
+  </footer>
+
+</body>
+</html>
