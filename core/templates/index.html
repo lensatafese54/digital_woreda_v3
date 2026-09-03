@@ -1,340 +1,829 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Woreda - Birth Registration Portal</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Birth Registration / የልደት ምዝገባ — Digital Woreda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        :root {
+            --bg: #eef2f7;
+            --navbar-bg: #1a365d;
+            --card-bg: #ffffff;
+            --text: #1a202c;
+            --text-muted: #6b7a90;
+            --border: #d8e2ee;
+            --input-bg: #ffffff;
+            --section-title: #1a365d;
+            --required: #e53e3e;
+            --accent: #1a56db;
+            --shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --navbar-bg: #0a1628;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --input-bg: #0f172a;
+            --section-title: #93c5fd;
+            --required: #f87171;
+            --accent: #60a5fa;
+            --shadow: 0 2px 12px rgba(0,0,0,0.35);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Noto Sans Ethiopic', sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Inter', 'Noto Sans Ethiopic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+            min-height: 100vh;
         }
-        .main-header {
-            background-color: #1a365d;
+
+        /* ── NAVBAR ── */
+        .top-navbar {
+            background: var(--navbar-bg);
+            padding: 0 0;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            transition: background 0.3s;
         }
-        .card-custom {
-            border-radius: 12px;
-            border: none;
+        .navbar-inner {
+            display: flex; align-items: stretch;
+            min-height: 52px;
         }
-        .form-section-title {
-            color: #1a365d;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 8px;
-            margin-bottom: 20px;
-            font-weight: 700;
+        .navbar-brand {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0 1.25rem;
+            font-size: 1rem; font-weight: 700; color: #fff;
+            text-decoration: none; white-space: nowrap;
         }
-        .required-star {
-            color: #dc3545;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-left: 2px;
+        .navbar-brand span { color: #fbbf24; }
+        .navbar-actions {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-left: auto; padding: 0 1rem;
         }
-        .preview-img {
-            max-height: 80px;
+        .btn-nav-outline {
+            background: transparent;
+            border: 1.5px solid rgba(255,255,255,0.45);
             border-radius: 6px;
-            margin-top: 8px;
-            display: none;
+            color: #fff;
+            font-size: 0.8rem; font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            cursor: pointer; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            transition: background 0.18s;
+        }
+        .btn-nav-outline:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .btn-nav-warning {
+            background: #d97706; border: none; border-radius: 6px;
+            color: #fff; font-size: 0.8rem; font-weight: 700;
+            padding: 0.3rem 0.85rem; cursor: pointer; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            transition: background 0.18s;
+        }
+        .btn-nav-warning:hover { background: #b45309; color: #fff; }
+        .toggle-pill {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            padding: 0.25rem 0.65rem;
+            color: #fff; cursor: pointer;
+            font-size: 0.78rem; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+        }
+        .toggle-pill:hover { background: rgba(255,255,255,0.2); }
+
+        /* ── SITE HEADER BANNER ── */
+        .site-banner {
+            background: var(--navbar-bg);
+            text-align: center;
+            padding: 1.4rem 1rem 1.6rem;
+            border-bottom: 3px solid #d97706;
+        }
+        [data-theme="dark"] .site-banner { background: #0a1628; }
+        .banner-title-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 1.25rem; font-weight: 800; color: #fff;
+            line-height: 1.6; margin-bottom: 0.2rem;
+        }
+        .banner-title-en {
+            font-size: 0.82rem; color: rgba(255,255,255,0.65);
+            letter-spacing: 0.02em; margin-bottom: 0.9rem;
+        }
+        .banner-subtitle-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 1rem; font-weight: 700; color: #fff;
+            margin-bottom: 0.75rem;
+        }
+        .btn-banner {
+            background: #d97706; color: #fff;
+            border: none; border-radius: 6px;
+            font-weight: 700; font-size: 0.88rem;
+            padding: 0.5rem 1.5rem; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-banner:hover { background: #b45309; }
+
+        /* ── MAIN CONTAINER ── */
+        .main-wrap { max-width: 780px; margin: 0 auto; padding: 1.75rem 1rem 3rem; }
+
+        /* ── MESSAGES ── */
+        .msg-bar {
+            border-radius: 10px; padding: 0.8rem 1rem;
+            font-size: 0.88rem; display: flex; align-items: flex-start;
+            gap: 0.6rem; margin-bottom: 1.25rem;
+            border: 1px solid;
+        }
+        .msg-error { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+        .msg-success { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+        [data-theme="dark"] .msg-error { background: #2d1515; border-color: #7f1d1d; color: #fca5a5; }
+        [data-theme="dark"] .msg-success { background: #052e16; border-color: #166534; color: #86efac; }
+        .msg-close { margin-left: auto; background: none; border: none; cursor: pointer; color: inherit; font-size: 1rem; padding: 0; opacity: 0.7; }
+        .msg-close:hover { opacity: 1; }
+
+        /* ── FORM TITLE ── */
+        .form-main-title {
+            font-size: 1.1rem; font-weight: 800; color: var(--text);
+            margin-bottom: 0.2rem;
+        }
+        .form-main-sub {
+            font-size: 0.78rem; color: var(--text-muted);
+            margin-bottom: 1.25rem;
+        }
+        .form-main-sub .star { color: var(--required); font-weight: 800; }
+
+        /* ── SECTION CARD (like the screenshot) ── */
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 1.25rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        /* Section icon row above the card (like the screenshot's person icon row) */
+        .section-icon-row {
+            display: flex; align-items: center;
+            padding: 0.6rem 1.25rem 0;
+            gap: 0.5rem; color: var(--text-muted); font-size: 1rem;
+        }
+
+        /* Section heading row inside card */
+        .section-heading {
+            display: flex; align-items: center; gap: 0.55rem;
+            padding: 0.85rem 1.25rem 0.75rem;
+            border-bottom: 1.5px solid var(--border);
+            background: var(--card-bg);
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .section-heading-icon { font-size: 1.1rem; }
+        .section-title-text {
+            font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
+            font-size: 1rem; font-weight: 700;
+            color: var(--section-title);
+            font-style: italic;
+        }
+        /* The EN part in italic like the screenshot */
+        .section-title-en { font-style: italic; }
+
+        .section-body { padding: 1.1rem 1.25rem; }
+
+        /* ── FIELD LABELS ── */
+        .field-wrap { margin-bottom: 0.85rem; }
+        .field-label {
+            display: block; font-size: 0.75rem; font-weight: 600;
+            color: var(--text-muted); margin-bottom: 0.3rem;
+            line-height: 1.4;
+        }
+        .field-label .label-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            display: block; font-size: 0.78rem; color: var(--text-muted);
+        }
+        .field-label .label-en { display: block; font-size: 0.72rem; color: var(--text-muted); }
+        .req { color: var(--required); font-weight: 800; margin-left: 1px; }
+
+        /* ── INPUTS ── */
+        .form-input, .form-select {
+            width: 100%; padding: 0.5rem 0.75rem;
+            border: 1.5px solid var(--border); border-radius: 7px;
+            font-size: 0.88rem; background: var(--input-bg); color: var(--text);
+            font-family: 'Inter', 'Noto Sans Ethiopic', sans-serif;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
+            appearance: none; -webkit-appearance: none;
+        }
+        .form-input:focus, .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+            background: var(--card-bg);
+        }
+        .form-input.is-invalid, .form-select.is-invalid {
+            border-color: var(--required);
+        }
+        .form-input::placeholder { color: #b0bec5; font-size: 0.82rem; font-style: italic; }
+        [data-theme="dark"] .form-input::placeholder { color: #475569; font-size: 0.82rem; font-style: italic; }
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 0.65rem center; background-size: 12px 9px;
+            padding-right: 2rem; cursor: pointer;
+        }
+        input[type="number"] { -moz-appearance: textfield; }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+        /* ── 2-column grid ── */
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+        .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.9rem; }
+
+        /* ── DATE ROW (like the screenshot: Day | Month | Year inline) ── */
+        .date-row { display: flex; gap: 0.6rem; align-items: flex-end; }
+        .date-row .date-part { flex: 1; }
+        .date-part-label {
+            display: block; font-size: 0.7rem; color: var(--text-muted);
+            text-align: center; margin-top: 0.2rem;
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+        }
+        .date-part-label-en { display: block; font-size: 0.68rem; color: var(--text-muted); text-align: center; }
+        .gc-auto {
+            font-size: 0.68rem; color: var(--accent);
+            display: block; text-align: center; margin-top: 0.2rem;
+        }
+
+        /* ── FILE INPUT — native style matching the screenshot ── */
+        .file-input-native {
+            width: 100%;
+            font-size: 0.82rem;
+            color: var(--text);
+        }
+        .file-input-native::file-selector-button {
+            padding: 0.35rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 5px 0 0 5px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            transition: background 0.2s;
+        }
+        .file-input-native::file-selector-button:hover { background: var(--border); }
+        .preview-img {
+            max-height: 64px; border-radius: 6px;
+            margin-top: 0.5rem; display: none;
+            border: 1px solid var(--border);
+        }
+
+        /* ── SUBMIT BAR ── */
+        .submit-bar {
+            display: flex; justify-content: flex-end; align-items: center;
+            gap: 1rem; padding: 1rem 0; margin-top: 0.5rem;
+        }
+        .btn-submit {
+            background: #1a365d; color: #fff;
+            border: none; border-radius: 8px;
+            font-weight: 700; font-size: 0.92rem;
+            padding: 0.65rem 2.25rem; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .btn-submit:hover { background: #2d4a7a; transform: translateY(-1px); }
+
+        /* ── LANG HELPERS ── */
+        .lang-am { display: block; }
+        .lang-en { display: none; }
+        body.show-en .lang-am { display: none; }
+        body.show-en .lang-en { display: block; }
+        span.lang-am { display: inline; }
+        span.lang-en { display: none; }
+        body.show-en span.lang-am { display: none; }
+        body.show-en span.lang-en { display: inline; }
+
+        /* ── TOAST ── */
+        .toast-error {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+            background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c;
+            border-radius: 10px; padding: 0.85rem 1rem;
+            max-width: 360px; box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+            display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.85rem;
+            animation: slideIn 0.3s ease;
+        }
+        [data-theme="dark"] .toast-error { background: #2d1515; border-color: #7f1d1d; color: #fca5a5; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast-close { background: none; border: none; color: inherit; cursor: pointer; margin-left: auto; font-size: 1rem; padding: 0; opacity: 0.7; flex-shrink: 0; }
+        .toast-close:hover { opacity: 1; }
+
+        @media (max-width: 600px) {
+            .row-2, .row-3 { grid-template-columns: 1fr; }
+            .date-row { flex-wrap: wrap; }
+            .date-row .date-part { min-width: calc(50% - 0.3rem); }
         }
     </style>
 </head>
 <body>
 
-    <!-- TOP NAVIGATION BAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark main-header shadow-sm">
-        <div class="container px-4">
-            <a class="navbar-brand fw-bold" href="{% url 'index' %}">
-                🏛️ Digital Woreda | የልደት ምዝገባ እና ማረጋገጫ
+<!-- ═══════════════ NAVBAR ═══════════════ -->
+<nav class="top-navbar">
+    <div class="container-fluid px-0">
+        <div class="navbar-inner">
+            <a href="{% url 'home' %}" class="navbar-brand">
+                🏛️ <span>Digital Woreda</span>
             </a>
-            <div class="ms-auto">
-                {% if user.is_authenticated and user.is_staff %}
-                    <a href="{% url 'registrar_dashboard' %}" class="btn btn-warning btn-sm fw-bold">Registrar Dashboard / ዳሽቦርድ</a>
+            <div class="navbar-actions">
+                <button class="toggle-pill" onclick="toggleLanguage()"><span id="langLabel">EN</span></button>
+                <button class="toggle-pill" onclick="toggleTheme()">
+                    <i class="bi bi-moon-fill" id="themeIcon"></i>
+                    <span id="themeLabel">Dark</span>
+                </button>
+                {% if user.is_authenticated %}
+                    <span style="color:rgba(255,255,255,0.7); font-size:0.78rem">
+                        <i class="bi bi-person-circle me-1"></i>{{ user.username }}
+                    </span>
+                    <a href="{% url 'my_registrations' %}" class="btn-nav-outline">
+                        <i class="bi bi-list-check"></i>
+                        <span class="lang-am">ሁኔታ ክትትል</span><span class="lang-en">My Status</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="btn-nav-outline">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="lang-am">ውጣ</span><span class="lang-en">Logout</span>
+                    </a>
                 {% else %}
-                    <a href="/admin/login/" class="btn btn-outline-light btn-sm">Registrar Login / መግቢያ</a>
+                    <a href="{% url 'register' %}" class="btn-nav-outline">
+                        <span class="lang-am">ተመዝገቡ</span><span class="lang-en">Register</span>
+                    </a>
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn-nav-warning">
+                        <span class="lang-am">ይግቡ</span><span class="lang-en">Login</span>
+                    </a>
                 {% endif %}
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- MAIN CONTAINER -->
-    <div class="container my-5 px-4">
+<!-- ═══════════════ SITE BANNER ═══════════════ -->
+<div class="site-banner">
+    <div class="banner-title-am lang-am">የፌደራል ሲቪል ምዝገባ እና የነዋሪነት አገልግሎት ኤጀንሲ</div>
+    <div class="banner-title-en lang-am">Civil Registration &amp; Resident Service Agency</div>
+    <div class="banner-title-am lang-en" style="font-size:1.1rem">Civil Registration &amp; Resident Service Agency (CRRSA)</div>
+    <div class="banner-subtitle-am lang-am">የልደት ምዝገባ ማመልከቻ ፎርም</div>
+    <div class="banner-subtitle-am lang-en" style="font-family:'Inter',sans-serif; font-size:0.98rem">Birth Registration Application Form</div>
+    <button class="btn-banner" onclick="document.getElementById('registrationForm').scrollIntoView({behavior:'smooth'})">
+        <span class="lang-am">📋 ምዝገባ ቅጽ</span>
+        <span class="lang-en">📋 Birth Registration Application</span>
+    </button>
+</div>
 
-        <!-- ALERT MESSAGES -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show fw-bold shadow-sm mb-4" role="alert">
-                    <span class="me-2">{% if message.tags == 'error' %}⚠️{% else %}ℹ️{% endif %}</span> {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main-wrap">
 
-        <!-- SEARCH SECTION -->
-        <div class="card card-custom shadow-sm p-4 bg-white mb-5">
-            <h4 class="fw-bold text-dark mb-3">🔍 Search Verified Registration / የተመዘገቡ መዝገቦችን ይፈልጉ</h4>
-            <form method="GET" action="{% url 'index' %}" class="row g-2">
-                <div class="col-md-9">
-                    <input type="text" name="search_name" class="form-control form-control-lg" placeholder="Enter Child Name or Registration ID..." value="{{ search_query|default:'' }}">
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">Search / ፈልግ</button>
-                </div>
-            </form>
+    <!-- MESSAGES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="msg-bar {% if message.tags == 'error' %}msg-error{% else %}msg-success{% endif %}">
+                <i class="bi {% if message.tags == 'error' %}bi-exclamation-triangle{% else %}bi-check-circle{% endif %}" style="margin-top:2px;flex-shrink:0"></i>
+                <span>{{ message }}</span>
+                <button class="msg-close" onclick="this.closest('.msg-bar').remove()"><i class="bi bi-x-lg"></i></button>
+            </div>
+        {% endfor %}
+    {% endif %}
 
-            <!-- SEARCH RESULTS TABLE -->
-            {% if search_results is not None %}
-                <div class="mt-4">
-                    <h5 class="fw-bold">Search Results:</h5>
-                    {% if search_results %}
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle border mt-2">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Registration ID</th>
-                                        <th>Child Name</th>
-                                        <th>Parents</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for item in search_results %}
-                                        <tr>
-                                            <td class="fw-bold text-primary">CRRSA-{{ item.pk|stringformat:"05d" }}</td>
-                                            <td>{{ item.child_full_name_amharic }} <br><small class="text-muted">{{ item.child_full_name_english }}</small></td>
-                                            <td><small>F: {{ item.father_name_english }}<br>M: {{ item.mother_name_english }}</small></td>
-                                            <td>
-                                                {% if item.status == 'APPROVED' %}
-                                                    <span class="badge bg-success">Approved</span>
-                                                {% elif item.status == 'REJECTED' %}
-                                                    <span class="badge bg-danger">Rejected</span>
-                                                {% else %}
-                                                    <span class="badge bg-warning text-dark">Pending</span>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {% if item.status == 'APPROVED' %}
-                                                    <a href="{% url 'print_certificate' item.pk %}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary fw-bold">🖨️ View Certificate</a>
-                                                {% else %}
-                                                    <span class="text-muted small">Pending Approval</span>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-warning mb-0 mt-2">No registration records found for "{{ search_query }}".</div>
-                    {% endif %}
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- NEW BIRTH REGISTRATION FORM -->
-        <div class="card card-custom shadow-sm p-4 bg-white">
-            <h3 class="fw-bold text-dark mb-1">📝 Birth Registration Application / የልደት ምዝገባ ቅጽ</h3>
-            <p class="text-muted small mb-4">All fields marked with (<span class="required-star">*</span>) are mandatory per Woreda legal regulations.</p>
-
-            <form method="POST" action="{% url 'index' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
-                {% csrf_token %}
-
-                <!-- SECTION 1: CHILD DETAILS -->
-                <h5 class="form-section-title">1. Child Details / የሕፃኑ መረጃ</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Child Name (Amharic) / የሕፃኑ ስም (በአማርኛ) <span class="required-star">*</span></label>
-                        <input type="text" name="child_full_name_amharic" class="form-control" value="{{ form_data.child_full_name_amharic|default:'' }}" required>
-                        <div class="invalid-feedback">Please enter the child's name in Amharic.</div>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Child Name (English) <span class="required-star">*</span></label>
-                        <input type="text" name="child_full_name_english" class="form-control" value="{{ form_data.child_full_name_english|default:'' }}" required>
-                        <div class="invalid-feedback">Please enter the child's name in English.</div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Sex / ጾታ <span class="required-star">*</span></label>
-                        <select name="sex" class="form-select" required>
-                            <option value="">Select...</option>
-                            <option value="M" {% if form_data.sex == 'M' %}selected{% endif %}>Male / ወንድ</option>
-                            <option value="F" {% if form_data.sex == 'F' %}selected{% endif %}>Female / ሴት</option>
-                        </select>
-                        <div class="invalid-feedback">Please select sex.</div>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold">Day / ቀን <span class="required-star">*</span></label>
-                        <input type="number" name="birth_day" id="birth_day" class="form-control" min="1" max="30" value="{{ form_data.birth_day|default:'' }}" required>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold">Month / ወር <span class="required-star">*</span></label>
-                        <input type="number" name="birth_month" id="birth_month" class="form-control" min="1" max="13" value="{{ form_data.birth_month|default:'' }}" required>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold">Year (E.C) <span class="required-star">*</span></label>
-                        <input type="number" name="birth_year_ec" id="birth_year_ec" class="form-control" placeholder="e.g. 2016" value="{{ form_data.birth_year_ec|default:'' }}" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Year (G.C) <span class="required-star">*</span></label>
-                        <input type="number" name="birth_year_gc" id="birth_year_gc" class="form-control" placeholder="Auto-calculated" value="{{ form_data.birth_year_gc|default:'' }}" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Subcity / ክፍለ ከተማ <span class="required-star">*</span></label>
-                        <input type="text" name="subcity" class="form-control" value="{{ form_data.subcity|default:'' }}" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Woreda / ወረዳ <span class="required-star">*</span></label>
-                        <input type="text" name="woreda" class="form-control" value="{{ form_data.woreda|default:'' }}" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Hospital/Facility Name <span class="required-star">*</span></label>
-                        <input type="text" name="hospital_org_name" class="form-control" value="{{ form_data.hospital_org_name|default:'' }}" required>
-                    </div>
-                </div>
-
-                <!-- SECTION 2: PARENTS INFORMATION -->
-                <h5 class="form-section-title">2. Parents Information / የወላጆች መረጃ</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Father Name (Amharic) / የአባት ስም (በአማርኛ) <span class="required-star">*</span></label>
-                        <input type="text" name="father_name_amharic" class="form-control" value="{{ form_data.father_name_amharic|default:'' }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Father Name (English) <span class="required-star">*</span></label>
-                        <input type="text" name="father_name_english" class="form-control" value="{{ form_data.father_name_english|default:'' }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Mother Name (Amharic) / የእናት ስም (በአማርኛ) <span class="required-star">*</span></label>
-                        <input type="text" name="mother_name_amharic" class="form-control" value="{{ form_data.mother_name_amharic|default:'' }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Mother Name (English) <span class="required-star">*</span></label>
-                        <input type="text" name="mother_name_english" class="form-control" value="{{ form_data.mother_name_english|default:'' }}" required>
-                    </div>
-                </div>
-
-                <!-- SECTION 3: DECLARANT / APPLICANT DETAILS -->
-                <h5 class="form-section-title">3. Declarant / Applicant Details / አመልካች መረጃ</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Applicant Name (Amharic) / የአመልካች ስም (በአማርኛ) <span class="required-star">*</span></label>
-                        <input type="text" name="applicant_name_amharic" class="form-control" value="{{ form_data.applicant_name_amharic|default:'' }}" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Applicant Name (English) <span class="required-star">*</span></label>
-                        <input type="text" name="applicant_name_english" class="form-control" value="{{ form_data.applicant_name_english|default:'' }}" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Relation / ዝምድና <span class="required-star">*</span></label>
-                        <input type="text" name="applicant_relation" class="form-control" placeholder="e.g. Father / Mother" value="{{ form_data.applicant_relation|default:'' }}" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Applicant Age / እድሜ <span class="required-star">*</span></label>
-                        <input type="number" name="applicant_age" class="form-control" min="18" max="120" value="{{ form_data.applicant_age|default:'' }}" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold">Phone Number / ስልክ ቁጥር <span class="required-star">*</span></label>
-                        <input type="tel" name="applicant_phone" class="form-control" placeholder="09..." value="{{ form_data.applicant_phone|default:'' }}" required>
-                    </div>
-                </div>
-
-                <!-- SECTION 4: DOCUMENT UPLOADS -->
-                <h5 class="form-section-title">4. Document Uploads / ማስረጃዎች</h5>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Child Photo / የሕፃኑ ፎቶ <span class="required-star">*</span></label>
-                        <input type="file" name="child_photo" class="form-control file-preview-input" accept="image/*" required>
-                        <img class="preview-img border shadow-sm mt-2" alt="Child Preview">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Hospital Birth Notification Doc <span class="required-star">*</span></label>
-                        <input type="file" name="hospital_document" class="form-control file-preview-input" accept="image/*,.pdf" required>
-                        <img class="preview-img border shadow-sm mt-2" alt="Hospital Doc Preview">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Father ID / Photo <span class="required-star">*</span></label>
-                        <input type="file" name="father_photo" class="form-control file-preview-input" accept="image/*" required>
-                        <img class="preview-img border shadow-sm mt-2" alt="Father ID Preview">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Mother ID / Photo <span class="required-star">*</span></label>
-                        <input type="file" name="mother_photo" class="form-control file-preview-input" accept="image/*" required>
-                        <img class="preview-img border shadow-sm mt-2" alt="Mother ID Preview">
-                    </div>
-                </div>
-
-                <!-- SUBMIT BUTTON -->
-                <div class="text-end border-top pt-3">
-                    <button type="submit" name="submit_registration" value="true" class="btn btn-success btn-lg px-5 fw-bold shadow-sm">
-                        Submit Registration / መዝግብ
-                    </button>
-                </div>
-            </form>
-        </div>
-
+    <!-- ── FORM ── -->
+    <div class="form-main-title lang-am">📝 የልደት ምዝገባ ቅጽ / Birth Registration Application</div>
+    <div class="form-main-title lang-en" style="font-size:1rem; font-weight:800">📝 Birth Registration Application / የልደት ምዝገባ ቅጽ</div>
+    <div class="form-main-sub">
+        All fields marked with (<span class="star">*</span>) are mandatory per Woreda legal regulations.
     </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <form method="POST" action="{% url 'index' %}" enctype="multipart/form-data" id="registrationForm" novalidate>
+        {% csrf_token %}
 
-    <!-- CLIENT-SIDE VALIDATION, IMAGE PREVIEWS & DATE CALCULATION -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Bootstrap Client-Side Validation Trigger
-            const forms = document.querySelectorAll('.needs-validation');
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
+        <!-- ══════ SECTION 1: CHILD INFORMATION ══════ -->
+        <!-- Icon row above card (matches screenshot) -->
+        <div class="section-icon-row"><i class="bi bi-person-fill"></i></div>
+        <div class="section-card">
+            <div class="section-heading">
+                <span class="section-heading-icon">👤</span>
+                <span class="section-title-text">
+                    <span class="lang-am">1. የሕፃኑ መረጃ / <em class="section-title-en">Child Information</em></span>
+                    <span class="lang-en"><em class="section-title-en">1. Child Information / የሕፃኑ መረጃ</em></span>
+                </span>
+            </div>
+            <div class="section-body">
 
-            // Improved Ethiopian Year (E.C) to Gregorian Year (G.C) Calculation
-            const ecYearInput = document.getElementById('birth_year_ec');
-            const ecMonthInput = document.getElementById('birth_month');
-            const gcYearInput = document.getElementById('birth_year_gc');
+                <!-- Child names row -->
+                <div class="row-2 mb-3" style="gap:1rem">
+                    <div class="field-wrap">
+                        <label class="field-label" for="child_name_am">
+                            <span class="label-am lang-am">የሕፃኑ ሙሉ ስም (በአማርኛ)</span>
+                            <span class="label-en lang-am">Child Full Name (Amharic)</span>
+                            <span class="label-en lang-en">Child Full Name (Amharic)</span>
+                        </label>
+                        <input type="text" id="child_name_am" name="child_full_name_amharic"
+                            class="form-input"
+                            placeholder="ምሳሌ: አበበ ካሳ ደምሴ"
+                            value="{{ form_data.child_full_name_amharic|default:'' }}"
+                            required>
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label" for="child_name_en">
+                            <span class="label-am lang-am">የሕፃኑ ሙሉ ስም (እንግሊዝኛ)</span>
+                            <span class="label-en lang-am">Child Full Name (English)</span>
+                            <span class="label-en lang-en">Child Full Name (English)</span>
+                        </label>
+                        <input type="text" id="child_name_en" name="child_full_name_english"
+                            class="form-input"
+                            placeholder="e.g. Abebe Kebede Alemu"
+                            value="{{ form_data.child_full_name_english|default:'' }}"
+                            required>
+                    </div>
+                </div>
 
-            function updateGCYear() {
-                const ecYear = parseInt(ecYearInput.value, 10);
-                const ecMonth = parseInt(ecMonthInput.value, 10) || 1;
+                <!-- Sex + Date of birth row -->
+                <div class="row" style="gap:0; margin:0 0 0.85rem">
+                    <div class="col-sm-4 pe-sm-3 mb-3 mb-sm-0">
+                        <div class="field-wrap" style="margin-bottom:0">
+                            <label class="field-label" for="sex_select">
+                                <span class="lang-am">ጾታ / Sex</span>
+                                <span class="lang-en">Sex / ጾታ</span>
+                                <span class="req">*</span>
+                            </label>
+                            <select id="sex_select" name="sex" class="form-select" required>
+                                <option value="">
+                                    <span class="lang-am">ይምረጡ</span><span class="lang-en">/ Select</span>
+                                </option>
+                                <option value="MALE" {% if form_data.sex == 'MALE' %}selected{% endif %}>Male / ወንድ</option>
+                                <option value="FEMALE" {% if form_data.sex == 'FEMALE' %}selected{% endif %}>Female / ሴት</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="field-wrap" style="margin-bottom:0">
+                            <label class="field-label">
+                                <span class="lang-am">የልደት ዕለት (የኢትዮጵያ አቆጣጠር)</span>
+                                <span class="lang-en">Date of Birth (Ethiopian Calendar E.C.)</span>
+                                <span class="req">*</span>
+                            </label>
+                            <div class="date-row">
+                                <div class="date-part">
+                                    <input type="number" name="birth_day" id="birth_day"
+                                        class="form-input" style="text-align:center"
+                                        placeholder="ቀን" min="1" max="30"
+                                        value="{{ form_data.birth_day|default:'' }}" required>
+                                    <span class="date-part-label lang-am">ቀ) (Day)</span>
+                                    <span class="date-part-label date-part-label-en lang-en">Day</span>
+                                </div>
+                                <div class="date-part">
+                                    <input type="number" name="birth_month" id="birth_month"
+                                        class="form-input" style="text-align:center"
+                                        placeholder="ወር" min="1" max="13"
+                                        value="{{ form_data.birth_month|default:'' }}" required>
+                                    <span class="date-part-label lang-am">ወ) (Month)</span>
+                                    <span class="date-part-label date-part-label-en lang-en">Month</span>
+                                </div>
+                                <div class="date-part" style="flex:1.4">
+                                    <input type="number" name="birth_year_ec" id="birth_year_ec"
+                                        class="form-input" style="text-align:center"
+                                        placeholder="ዓ.ም"
+                                        value="{{ form_data.birth_year_ec|default:'' }}" required>
+                                    <span class="date-part-label lang-am">ዓ.ም (Year)</span>
+                                    <span class="date-part-label date-part-label-en lang-en">Year (E.C.)</span>
+                                </div>
+                                <div class="date-part" style="flex:1.4">
+                                    <input type="number" name="birth_year_gc" id="birth_year_gc"
+                                        class="form-input" style="text-align:center; background:var(--bg)"
+                                        placeholder="G.C." readonly>
+                                    <span class="gc-auto">Auto G.C.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                if (ecYear && ecYear > 1900 && ecYear < 2100) {
-                    // Ethiopian New Year (Meskerem 1) occurs in September (G.C.)
-                    // Months 1-4 (Meskerem-Tahsas) map to +7 years (Sept-Dec)
-                    // Months 5-13 (Tir-Pagume) map to +8 years (Jan-Sept)
-                    const offset = (ecMonth >= 1 && ecMonth <= 4) ? 7 : 8;
-                    gcYearInput.value = ecYear + offset;
-                }
-            }
+                <!-- Child photo -->
+                <div class="field-wrap">
+                    <label class="field-label" for="child_photo">
+                        <span class="lang-am">የሕፃኑ ፓስፖርት ፎቶ (ፎቶ ስቅሉ)</span>
+                        <span class="lang-en">Child Passport Photo (Upload)</span>
+                        <span class="req">*</span>
+                    </label>
+                    <input type="file" id="child_photo" name="child_photo"
+                        class="file-input-native" accept="image/*" required
+                        onchange="previewFile(this,'prev_child')">
+                    <img id="prev_child" class="preview-img" alt="">
+                </div>
 
-            if (ecYearInput && gcYearInput) {
-                ecYearInput.addEventListener('input', updateGCYear);
-                if (ecMonthInput) ecMonthInput.addEventListener('change', updateGCYear);
-            }
+            </div>
+        </div>
 
-            // Image File Previews
-            const fileInputs = document.querySelectorAll('.file-preview-input');
-            fileInputs.forEach(input => {
-                input.addEventListener('change', function () {
-                    const file = this.files[0];
-                    const imgPreview = this.nextElementSibling;
-                    if (file && file.type.startsWith('image/') && imgPreview && imgPreview.classList.contains('preview-img')) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            imgPreview.src = e.target.result;
-                            imgPreview.style.display = 'block';
-                        };
-                        reader.readAsDataURL(file);
-                    } else if (imgPreview && imgPreview.classList.contains('preview-img')) {
-                        imgPreview.style.display = 'none';
-                    }
-                });
-            });
-        });
-    </script>
+        <!-- ══════ SECTION 2: PARENTS INFORMATION ══════ -->
+        <div class="section-icon-row"><i class="bi bi-people-fill"></i></div>
+        <div class="section-card">
+            <div class="section-heading">
+                <span class="section-heading-icon">👥</span>
+                <span class="section-title-text">
+                    <span class="lang-am">2. የወላጆች መረጃ / <em class="section-title-en">Parents Information</em></span>
+                    <span class="lang-en"><em class="section-title-en">2. Parents Information / የወላጆች መረጃ</em></span>
+                </span>
+            </div>
+            <div class="section-body">
+
+                <!-- Father -->
+                <div class="row-2 mb-3">
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">የአባት ሙሉ ስም (አማርኛ)</span>
+                            <span class="lang-en">Father Full Name (Amharic)</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="text" name="father_name_amharic" class="form-input"
+                            placeholder="ምሳሌ: ካሳ ደምሴ"
+                            value="{{ form_data.father_name_amharic|default:'' }}" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">የአባት ሙሉ ስም (እንግሊዝኛ)</span>
+                            <span class="lang-en">Father Full Name (English)</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="text" name="father_name_english" class="form-input"
+                            placeholder="e.g. Kasa Demse Worku"
+                            value="{{ form_data.father_name_english|default:'' }}" required>
+                    </div>
+                </div>
+                <!-- Mother -->
+                <div class="row-2">
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">የእናት ሙሉ ስም (አማርኛ)</span>
+                            <span class="lang-en">Mother Full Name (Amharic)</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="text" name="mother_name_amharic" class="form-input"
+                            placeholder="ምሳሌ: ትዕግስት አለሙ"
+                            value="{{ form_data.mother_name_amharic|default:'' }}" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">የእናት ሙሉ ስም (እንግሊዝኛ)</span>
+                            <span class="lang-en">Mother Full Name (English)</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="text" name="mother_name_english" class="form-input"
+                            placeholder="e.g. Tigist Alemu Bekele"
+                            value="{{ form_data.mother_name_english|default:'' }}" required>
+                    </div>
+                </div>
+
+                <!-- Parent photos -->
+                <div class="row-2 mt-3">
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">የአባት ፎቶ / መታወቂያ</span>
+                            <span class="lang-en">Father ID / Photo</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="file" name="father_photo" class="file-input-native" accept="image/*" required
+                            onchange="previewFile(this,'prev_father')">
+                        <img id="prev_father" class="preview-img" alt="">
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">የእናት ፎቶ / መታወቂያ</span>
+                            <span class="lang-en">Mother ID / Photo</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="file" name="mother_photo" class="file-input-native" accept="image/*" required
+                            onchange="previewFile(this,'prev_mother')">
+                        <img id="prev_mother" class="preview-img" alt="">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ══════ SECTION 3: LOCATION & CONTACT ══════ -->
+        <div class="section-icon-row"><i class="bi bi-geo-alt-fill"></i></div>
+        <div class="section-card">
+            <div class="section-heading">
+                <span class="section-heading-icon">📍</span>
+                <span class="section-title-text">
+                    <span class="lang-am">3. የትውልድ ቦታ እና ሕክምና / <em class="section-title-en">Location &amp; Contact</em></span>
+                    <span class="lang-en"><em class="section-title-en">3. Location &amp; Contact / የትውልድ ቦታ እና ሕክምና</em></span>
+                </span>
+            </div>
+            <div class="section-body">
+                <div class="row-3">
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">ክፍለ ከተማ</span>
+                            <span class="lang-en">Subcity</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="text" name="subcity" class="form-input"
+                            placeholder="e.g. Yeka"
+                            value="{{ form_data.subcity|default:'' }}" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">ወረዳ</span>
+                            <span class="lang-en">Woreda</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="text" name="woreda" class="form-input"
+                            placeholder="e.g. 11"
+                            value="{{ form_data.woreda|default:'' }}" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">የሆስፒታሉ ስም</span>
+                            <span class="lang-en">Hospital / Facility</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="text" name="hospital_org_name" class="form-input"
+                            placeholder="e.g. Tikur Anbessa"
+                            value="{{ form_data.hospital_org_name|default:'' }}" required>
+                    </div>
+                </div>
+                <!-- Hospital document -->
+                <div class="field-wrap mt-3">
+                    <label class="field-label">
+                        <span class="lang-am">የሆስፒታል ሰነድ (ዶክሜንት)</span>
+                        <span class="lang-en">Hospital Birth Notification Document</span>
+                        <span class="req">*</span>
+                    </label>
+                    <input type="file" name="hospital_document" class="file-input-native" accept="image/*,.pdf" required
+                        onchange="previewFile(this,'prev_hosp')">
+                    <img id="prev_hosp" class="preview-img" alt="">
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════ SECTION 4: APPLICANT DETAILS ══════ -->
+        <div class="section-icon-row"><i class="bi bi-person-vcard-fill"></i></div>
+        <div class="section-card">
+            <div class="section-heading">
+                <span class="section-heading-icon">🧑‍💼</span>
+                <span class="section-title-text">
+                    <span class="lang-am">4. የአቅራቢ መረጃ / <em class="section-title-en">Declarant / Applicant</em></span>
+                    <span class="lang-en"><em class="section-title-en">4. Declarant / Applicant Details</em></span>
+                </span>
+            </div>
+            <div class="section-body">
+                <div class="row-2 mb-3">
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">የአቅራቢ ስም (አማርኛ)</span>
+                            <span class="lang-en">Applicant Name (Amharic)</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="text" name="applicant_name_amharic" class="form-input"
+                            placeholder="ምሳሌ: ዮሐንስ ካሳ"
+                            value="{{ form_data.applicant_name_amharic|default:'' }}" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">የአቅራቢ ስም (እንግሊዝኛ)</span>
+                            <span class="lang-en">Applicant Name (English)</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="text" name="applicant_name_english" class="form-input"
+                            placeholder="e.g. Yohannes Kasa"
+                            value="{{ form_data.applicant_name_english|default:'' }}" required>
+                    </div>
+                </div>
+                <div class="row-3">
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">ዝምድና</span>
+                            <span class="lang-en">Relation</span>
+                            <span class="req">*</span>
+                        </label>
+                        <select name="applicant_relation" class="form-select" required>
+                            <option value="">Select...</option>
+                            <option value="Father" {% if form_data.applicant_relation == 'Father' %}selected{% endif %}>Father / አባት</option>
+                            <option value="Mother" {% if form_data.applicant_relation == 'Mother' %}selected{% endif %}>Mother / እናት</option>
+                            <option value="Guardian" {% if form_data.applicant_relation == 'Guardian' %}selected{% endif %}>Guardian / አሳዳጊ</option>
+                            <option value="Other" {% if form_data.applicant_relation == 'Other' %}selected{% endif %}>Other / ሌላ</option>
+                        </select>
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">እድሜ</span>
+                            <span class="lang-en">Age</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="number" name="applicant_age" class="form-input"
+                            placeholder="18–120" min="18" max="120"
+                            value="{{ form_data.applicant_age|default:'' }}" required>
+                    </div>
+                    <div class="field-wrap">
+                        <label class="field-label">
+                            <span class="lang-am">ስልክ ቁጥር</span>
+                            <span class="lang-en">Phone Number</span>
+                            <span class="req">*</span>
+                        </label>
+                        <input type="tel" name="applicant_phone" class="form-input"
+                            placeholder="09xxxxxxxx"
+                            value="{{ form_data.applicant_phone|default:'' }}" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════ SUBMIT ══════ -->
+        <div class="submit-bar">
+            <div style="font-size:0.78rem; color:var(--text-muted)">
+                <i class="bi bi-shield-check" style="color:var(--accent)"></i>
+                <span class="lang-am"> ሁሉም መረጃዎ ደህንነቱ ተጠብቆ ይቀመጣሉ</span>
+                <span class="lang-en"> Your information is securely stored</span>
+            </div>
+            <button type="submit" name="submit_registration" value="true" class="btn-submit">
+                <i class="bi bi-send"></i>
+                <span class="lang-am">ምዝገባ አስገባ</span>
+                <span class="lang-en">Submit Registration</span>
+            </button>
+        </div>
+
+    </form>
+</div><!-- /main-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ── THEME ──
+function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('theme', t);
+    document.getElementById('themeIcon').className = t === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    document.getElementById('themeLabel').textContent = t === 'dark' ? 'Light' : 'Dark';
+}
+function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
+applyTheme(localStorage.getItem('theme') || 'light');
+
+// ── LANGUAGE ──
+let lang = localStorage.getItem('lang') || 'am';
+function applyLanguage(l) {
+    lang = l; localStorage.setItem('lang', l);
+    document.getElementById('langLabel').textContent = l === 'en' ? 'አማ' : 'EN';
+    l === 'en' ? document.body.classList.add('show-en') : document.body.classList.remove('show-en');
+}
+function toggleLanguage() { applyLanguage(lang === 'am' ? 'en' : 'am'); }
+applyLanguage(lang);
+
+// ── EC → GC YEAR ──
+const ecY = document.getElementById('birth_year_ec');
+const ecM = document.getElementById('birth_month');
+const gcY = document.getElementById('birth_year_gc');
+function calcGC() {
+    const y = parseInt(ecY.value, 10), m = parseInt(ecM.value, 10) || 1;
+    gcY.value = (y > 1900 && y < 2100) ? y + ((m >= 1 && m <= 4) ? 7 : 8) : '';
+}
+if (ecY) { ecY.addEventListener('input', calcGC); ecM.addEventListener('input', calcGC); if (ecY.value) calcGC(); }
+
+// ── FILE PREVIEW ──
+function previewFile(input, previewId) {
+    const img = document.getElementById(previewId);
+    const file = input.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const r = new FileReader();
+        r.onload = e => { img.src = e.target.result; img.style.display = 'block'; };
+        r.readAsDataURL(file);
+    } else { img.style.display = 'none'; }
+}
+
+// ── CLIENT-SIDE VALIDATION ──
+const form = document.getElementById('registrationForm');
+form.addEventListener('submit', function(e) {
+    const fields = form.querySelectorAll('[required]');
+    let bad = [], first = null;
+    fields.forEach(f => {
+        f.classList.remove('is-invalid');
+        const empty = f.type === 'file' ? f.files.length === 0 : !f.value.trim();
+        if (empty) { f.classList.add('is-invalid'); bad.push(f); if (!first) first = f; }
+    });
+    if (bad.length) {
+        e.preventDefault();
+        first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Toast
+        document.getElementById('valToast')?.remove();
+        const t = document.createElement('div');
+        t.id = 'valToast'; t.className = 'toast-error';
+        t.innerHTML = `<i class="bi bi-exclamation-triangle" style="flex-shrink:0;margin-top:2px"></i>
+            <span><strong>${bad.length} field${bad.length>1?'s':''} missing.</strong><br>
+            <span style="font-size:0.78rem">Please fill all required fields marked with *</span></span>
+            <button class="toast-close" onclick="this.parentElement.remove()"><i class="bi bi-x-lg"></i></button>`;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 5500);
+    }
+});
+form.querySelectorAll('[required]').forEach(f => {
+    f.addEventListener('input', () => f.classList.remove('is-invalid'));
+    f.addEventListener('change', () => f.classList.remove('is-invalid'));
+});
+</script>
 </body>
 </html>

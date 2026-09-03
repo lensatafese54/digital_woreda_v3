@@ -1,7 +1,30 @@
 import datetime
 from django.db import models
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+
+
+class UserProfile(models.Model):
+    """
+    Extends Django's built-in User with a role field.
+    Every registered user automatically gets a profile via signal.
+    Admins are pre-created via management command — never through the public register page.
+    """
+    class Role(models.TextChoices):
+        ADMIN = 'ADMIN', 'Admin'
+        USER  = 'USER',  'User'
+
+    user  = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    role  = models.CharField(max_length=10, choices=Role.choices, default=Role.USER)
+    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Phone Number")
+
+    def __str__(self):
+        return f"{self.user.username} [{self.role}]"
+
+    @property
+    def is_admin(self):
+        return self.role == self.Role.ADMIN
 
 
 class BirthRegistration(models.Model):
@@ -74,6 +97,14 @@ class BirthRegistration(models.Model):
         null=True, 
         verbose_name="Rejection Reason",
         help_text="Detailed explanation provided to the applicant if status is REJECTED."
+    )
+    # The User who submitted this registration — used to show only their own records
+    submitted_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='registrations',
+        verbose_name="Submitted By",
     )
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)

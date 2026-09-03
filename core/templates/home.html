@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Woreda – Birth Registration Portal / የልደት ምዝገባ ፖርታል</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        /* ===================== CSS VARIABLES ===================== */
+        :root {
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-navbar: #1a365d;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --accent-blue: #1a56db;
+            --accent-gold: #d97706;
+            --accent-green: #059669;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
+            --hero-gradient: linear-gradient(135deg, #1a365d 0%, #2d6a9f 50%, #1a56db 100%);
+            --step-bg: #eef2ff;
+        }
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-navbar: #0f172a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent-blue: #60a5fa;
+            --accent-gold: #fbbf24;
+            --accent-green: #34d399;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e3a5f 100%);
+            --step-bg: #1e2a3a;
+        }
+
+        /* ===================== GLOBAL ===================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', 'Noto Sans Ethiopic', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+        .amharic { font-family: 'Noto Sans Ethiopic', sans-serif; }
+
+        /* ===================== NAVBAR ===================== */
+        .top-navbar {
+            background: var(--bg-navbar);
+            padding: 0.85rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            transition: background 0.3s;
+        }
+        .navbar-brand-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .navbar-brand-text span { color: #fbbf24; }
+        .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            padding: 0.35rem 0.75rem;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background 0.2s;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.22); }
+
+        /* Language Toggle */
+        .lang-toggle {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            padding: 0.35rem 0.75rem;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .lang-toggle:hover { background: rgba(255,255,255,0.22); }
+
+        /* ===================== HERO SECTION ===================== */
+        .hero-section {
+            background: var(--hero-gradient);
+            padding: 5.5rem 0 5rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 92vh;
+            display: flex;
+            align-items: center;
+        }
+
+        /* ── Animated background particles ── */
+        .hero-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            animation: particleDrift linear infinite;
+        }
+        @keyframes particleDrift {
+            0%   { transform: translateY(0)   rotate(0deg);   opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ── Subtle grid overlay ── */
+        .hero-grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        /* ── Glowing orbs ── */
+        .hero-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: orbPulse 6s ease-in-out infinite alternate;
+        }
+        .orb-1 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(26,86,219,0.35), transparent 70%);
+            top: -15%; right: -10%;
+            animation-delay: 0s;
+        }
+        .orb-2 {
+            width: 350px; height: 350px;
+            background: radial-gradient(circle, rgba(251,191,36,0.18), transparent 70%);
+            bottom: -10%; left: -5%;
+            animation-delay: 2s;
+        }
+        .orb-3 {
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(5,150,105,0.2), transparent 70%);
+            top: 40%; left: 30%;
+            animation-delay: 4s;
+        }
+        @keyframes orbPulse {
+            0%   { transform: scale(1)   translateY(0); }
+            100% { transform: scale(1.2) translateY(-30px); }
+        }
+
+        /* ── Text entrance animations ── */
+        .hero-fade-in {
+            opacity: 0;
+            transform: translateY(28px);
+            animation: fadeInUp 0.75s ease forwards;
+        }
+        .hero-fade-in.d1 { animation-delay: 0.1s; }
+        .hero-fade-in.d2 { animation-delay: 0.3s; }
+        .hero-fade-in.d3 { animation-delay: 0.5s; }
+        .hero-fade-in.d4 { animation-delay: 0.7s; }
+        .hero-fade-in.d5 { animation-delay: 0.9s; }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Badge ── */
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(251,191,36,0.15);
+            border: 1px solid rgba(251,191,36,0.45);
+            color: #fbbf24;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 0.38rem 1rem;
+            border-radius: 50px;
+            margin-bottom: 1.4rem;
+            letter-spacing: 0.04em;
+            backdrop-filter: blur(4px);
+        }
+        .hero-badge .badge-dot {
+            width: 7px; height: 7px;
+            background: #fbbf24;
+            border-radius: 50%;
+            animation: badgeBlink 1.5s ease-in-out infinite;
+        }
+        @keyframes badgeBlink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        /* ── Titles ── */
+        .hero-title-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.45;
+            margin-bottom: 0.4rem;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+        }
+        .hero-title-en {
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.72);
+            margin-bottom: 1.4rem;
+        }
+        .hero-desc-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 0.98rem;
+            color: rgba(255,255,255,0.78);
+            line-height: 2;
+            margin-bottom: 0.4rem;
+        }
+        .hero-desc-en {
+            font-size: 0.93rem;
+            color: rgba(255,255,255,0.62);
+            line-height: 1.75;
+            margin-bottom: 2rem;
+        }
+
+        /* ── CTA buttons ── */
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 0;
+        }
+        .btn-hero-primary {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #1a202c;
+            font-weight: 800;
+            padding: 0.9rem 2.1rem;
+            border-radius: 10px;
+            border: none;
+            font-size: 0.95rem;
+            text-decoration: none;
+            box-shadow: 0 4px 18px rgba(251,191,36,0.35);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-hero-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(251,191,36,0.5);
+            color: #1a202c;
+        }
+        .btn-hero-primary:hover::before { opacity: 1; }
+        .btn-hero-secondary {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-weight: 600;
+            padding: 0.9rem 2rem;
+            border-radius: 10px;
+            border: 1.5px solid rgba(255,255,255,0.35);
+            font-size: 0.95rem;
+            text-decoration: none;
+            backdrop-filter: blur(6px);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .btn-hero-secondary:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.65);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* ── Stats ── */
+        .hero-stats {
+            display: flex;
+            gap: 0;
+            margin-top: 2.75rem;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            text-align: center;
+            padding: 0.6rem 1.5rem;
+            position: relative;
+        }
+        .hero-stat + .hero-stat::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 20%; bottom: 20%;
+            width: 1px;
+            background: rgba(255,255,255,0.2);
+        }
+        .hero-stat:first-child { padding-left: 0; }
+        .hero-stat-num {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fbbf24;
+            display: block;
+            line-height: 1.1;
+            text-shadow: 0 0 20px rgba(251,191,36,0.5);
+        }
+        .counter-anim { animation: counterPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        @keyframes counterPop {
+            0%   { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1);   opacity: 1; }
+        }
+        .hero-stat-label {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.58);
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            margin-top: 0.15rem;
+            display: block;
+        }
+
+        /* ── Certificate mockup ── */
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Decorative ring behind certificate */
+        .cert-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px dashed rgba(251,191,36,0.25);
+            animation: ringRotate 20s linear infinite;
+        }
+        .ring-1 { width: 380px; height: 380px; }
+        .ring-2 { width: 450px; height: 450px; border-color: rgba(255,255,255,0.08); animation-duration: 30s; animation-direction: reverse; }
+        @keyframes ringRotate { to { transform: rotate(360deg); } }
+
+        /* Floating badges around the certificate */
+        .cert-float-badge {
+            position: absolute;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.22);
+            backdrop-filter: blur(8px);
+            border-radius: 10px;
+            padding: 0.45rem 0.85rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            animation: badgeFloat 3s ease-in-out infinite alternate;
+        }
+        .cert-float-badge.top-left {
+            top: 8%; left: -8%;
+            animation-delay: 0s;
+        }
+        .cert-float-badge.bottom-right {
+            bottom: 8%; right: -8%;
+            animation-delay: 1.5s;
+        }
+        @keyframes badgeFloat {
+            0%   { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .certificate-mockup {
+            background: #fff;
+            border-radius: 18px;
+            padding: 1.6rem;
+            width: 310px;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.15),
+                0 4px 6px rgba(0,0,0,0.12),
+                0 20px 50px rgba(0,0,0,0.35),
+                0 0 0 5px rgba(251,191,36,0.22);
+            position: relative;
+            z-index: 2;
+            animation: floatCert 4s ease-in-out infinite;
+        }
+        @keyframes floatCert {
+            0%, 100% { transform: translateY(0px)   rotate(0deg); }
+            33%       { transform: translateY(-10px) rotate(0.5deg); }
+            66%       { transform: translateY(-6px)  rotate(-0.5deg); }
+        }
+        .cert-header {
+            text-align: center;
+            border-bottom: 2px solid #1a365d;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .cert-logo { font-size: 1.75rem; margin-bottom: 0.25rem; }
+        .cert-title-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #1a365d;
+            line-height: 1.55;
+        }
+        .cert-body { font-size: 0.72rem; }
+        .cert-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.32rem 0;
+            border-bottom: 1px solid #f0f4f8;
+            align-items: center;
+        }
+        .cert-label { color: #718096; font-size: 0.62rem; }
+        .cert-val {
+            font-weight: 700;
+            color: #1a202c;
+            font-size: 0.68rem;
+        }
+        /* Typewriter effect on cert name */
+        .cert-val.typing::after {
+            content: '|';
+            animation: blink 0.7s step-end infinite;
+            color: #1a56db;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .cert-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: #ecfdf5;
+            color: #059669;
+            font-size: 0.63rem;
+            font-weight: 700;
+            padding: 0.18rem 0.55rem;
+            border-radius: 50px;
+            border: 1px solid #059669;
+            margin-top: 0.6rem;
+        }
+        .cert-badge .badge-pulse {
+            width: 6px; height: 6px;
+            background: #059669;
+            border-radius: 50%;
+            animation: badgeBlink 1.5s ease-in-out infinite;
+        }
+        .cert-qr {
+            width: 42px; height: 42px;
+            background: #1a365d;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.3rem;
+            float: right;
+            margin-top: 0.5rem;
+        }
+
+        /* ===================== SECTION STYLES ===================== */
+        .section-title-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .section-title-en {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .section-divider {
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #1a365d, #1a56db);
+            border-radius: 4px;
+            margin: 1rem auto 2rem;
+        }
+        .section-divider.left { margin-left: 0; }
+
+        /* ===================== ABOUT / FEATURES MARQUEE ===================== */
+        .info-section {
+            padding: 4.5rem 0 3.5rem;
+            background: var(--bg-secondary);
+            transition: background 0.3s;
+            overflow: hidden;
+        }
+
+        /* ── Marquee wrapper ── */
+        .feat-marquee-outer {
+            overflow: hidden;
+            position: relative;
+            margin-top: 0.5rem;
+            /* Fade edges */
+            -webkit-mask-image: linear-gradient(
+                to right,
+                transparent 0%,
+                black 8%,
+                black 92%,
+                transparent 100%
+            );
+            mask-image: linear-gradient(
+                to right,
+                transparent 0%,
+                black 8%,
+                black 92%,
+                transparent 100%
+            );
+        }
+
+        /* The scrolling belt — contains cards × 2 for seamless loop */
+        .feat-marquee-track {
+            display: flex;
+            gap: 1.5rem;
+            width: max-content;
+            animation: marqueeScroll 18s linear infinite;
+            padding: 1.5rem 0.75rem;
+        }
+        .feat-marquee-track:hover { animation-play-state: paused; }
+
+        @keyframes marqueeScroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ── Card ── */
+        .feat-card {
+            flex: 0 0 270px;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+            border-radius: 22px;
+            padding: 2rem 1.75rem 1.75rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s,
+                        border-color 0.3s, background 0.3s;
+            box-shadow: var(--shadow-sm);
+            cursor: default;
+        }
+
+        /* Glow blob */
+        .feat-card::before {
+            content: '';
+            position: absolute;
+            top: -40px; left: -40px;
+            width: 150px; height: 150px;
+            border-radius: 50%;
+            opacity: 0.1;
+            transition: opacity 0.35s, transform 0.35s;
+            pointer-events: none;
+        }
+        .feat-card.c-blue::before   { background: #3b82f6; }
+        .feat-card.c-green::before  { background: #10b981; }
+        .feat-card.c-gold::before   { background: #f59e0b; }
+        .feat-card.c-purple::before { background: #8b5cf6; }
+
+        .feat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+        .feat-card:hover::before { opacity: 0.2; transform: scale(1.3); }
+
+        /* colour-specific hover borders */
+        .feat-card.c-blue:hover   { border-color: #3b82f6; }
+        .feat-card.c-green:hover  { border-color: #10b981; }
+        .feat-card.c-gold:hover   { border-color: #f59e0b; }
+        .feat-card.c-purple:hover { border-color: #8b5cf6; }
+
+        /* ── Icon box ── */
+        .feat-icon-box {
+            width: 62px; height: 62px;
+            border-radius: 17px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.25rem;
+            position: relative; z-index: 1;
+            transition: transform 0.3s;
+        }
+        .feat-card:hover .feat-icon-box { transform: scale(1.12) rotate(-5deg); }
+        .feat-card.c-blue   .feat-icon-box { background: linear-gradient(135deg,#dbeafe,#bfdbfe); }
+        .feat-card.c-green  .feat-icon-box { background: linear-gradient(135deg,#d1fae5,#a7f3d0); }
+        .feat-card.c-gold   .feat-icon-box { background: linear-gradient(135deg,#fef3c7,#fde68a); }
+        .feat-card.c-purple .feat-icon-box { background: linear-gradient(135deg,#ede9fe,#ddd6fe); }
+        [data-theme="dark"] .feat-card.c-blue   .feat-icon-box { background: linear-gradient(135deg,#1e3a5f,#1e40af44); }
+        [data-theme="dark"] .feat-card.c-green  .feat-icon-box { background: linear-gradient(135deg,#14532d,#065f4644); }
+        [data-theme="dark"] .feat-card.c-gold   .feat-icon-box { background: linear-gradient(135deg,#451a03,#92400e44); }
+        [data-theme="dark"] .feat-card.c-purple .feat-icon-box { background: linear-gradient(135deg,#2e1065,#5b21b644); }
+
+        /* ── Text ── */
+        .feat-title-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 1.02rem; font-weight: 700;
+            color: var(--text-primary); margin-bottom: 0.15rem;
+            position: relative; z-index: 1;
+        }
+        .feat-title-en {
+            font-size: 0.88rem; font-weight: 700;
+            margin-bottom: 0.7rem;
+            position: relative; z-index: 1;
+        }
+        .feat-card.c-blue   .feat-title-en { color: #2563eb; }
+        .feat-card.c-green  .feat-title-en { color: #059669; }
+        .feat-card.c-gold   .feat-title-en { color: #d97706; }
+        .feat-card.c-purple .feat-title-en { color: #7c3aed; }
+        [data-theme="dark"] .feat-card.c-blue   .feat-title-en { color: #93c5fd; }
+        [data-theme="dark"] .feat-card.c-green  .feat-title-en { color: #34d399; }
+        [data-theme="dark"] .feat-card.c-gold   .feat-title-en { color: #fbbf24; }
+        [data-theme="dark"] .feat-card.c-purple .feat-title-en { color: #c4b5fd; }
+
+        .feat-text-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 0.82rem; color: var(--text-secondary);
+            line-height: 1.85; margin-bottom: 0.2rem;
+            position: relative; z-index: 1;
+        }
+        .feat-text-en {
+            font-size: 0.8rem; color: var(--text-muted);
+            line-height: 1.7;
+            position: relative; z-index: 1;
+        }
+
+        /* ── Bottom tag ── */
+        .feat-tag {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            margin-top: 1rem;
+            font-size: 0.7rem; font-weight: 700;
+            padding: 0.22rem 0.75rem; border-radius: 50px;
+            position: relative; z-index: 1;
+        }
+        .feat-card.c-blue   .feat-tag { background:#dbeafe; color:#1d4ed8; }
+        .feat-card.c-green  .feat-tag { background:#d1fae5; color:#065f46; }
+        .feat-card.c-gold   .feat-tag { background:#fef3c7; color:#92400e; }
+        .feat-card.c-purple .feat-tag { background:#ede9fe; color:#5b21b6; }
+        [data-theme="dark"] .feat-card.c-blue   .feat-tag { background:#1e3a5f; color:#93c5fd; }
+        [data-theme="dark"] .feat-card.c-green  .feat-tag { background:#14532d; color:#6ee7b7; }
+        [data-theme="dark"] .feat-card.c-gold   .feat-tag { background:#451a03; color:#fcd34d; }
+        [data-theme="dark"] .feat-card.c-purple .feat-tag { background:#2e1065; color:#c4b5fd; }
+
+        /* ===================== STEPS SECTION ===================== */
+        .steps-section { padding: 5rem 0; background: var(--bg-primary); transition: background 0.3s; }
+        .step-card {
+            background: var(--step-bg);
+            border-radius: 16px;
+            padding: 1.75rem;
+            position: relative;
+            transition: background 0.3s, transform 0.25s;
+            height: 100%;
+        }
+        .step-card:hover { transform: translateY(-3px); }
+        .step-num {
+            width: 42px;
+            height: 42px;
+            background: var(--accent-blue);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 1.1rem;
+        }
+        .step-title-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+        .step-title-en { font-size: 0.83rem; font-weight: 600; color: var(--accent-blue); margin-bottom: 0.7rem; }
+        .step-text-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            line-height: 1.85;
+            margin-bottom: 0.25rem;
+        }
+        .step-text-en { font-size: 0.8rem; color: var(--text-muted); line-height: 1.7; }
+        .step-connector {
+            position: absolute;
+            top: 50%;
+            right: -20px;
+            transform: translateY(-50%);
+            color: var(--accent-blue);
+            font-size: 1.4rem;
+            z-index: 1;
+        }
+
+        /* ===================== ANIMATED DEMO SECTION ===================== */
+        .demo-section {
+            padding: 5rem 0;
+            background: var(--bg-secondary);
+            transition: background 0.3s;
+        }
+        .demo-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            max-width: 800px;
+            margin: 0 auto;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .demo-topbar {
+            background: #1a365d;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .demo-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #fbbf24; }
+        .dot-green { background: #22c55e; }
+        .demo-url {
+            background: rgba(255,255,255,0.12);
+            border-radius: 6px;
+            padding: 0.25rem 0.75rem;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.75rem;
+            flex: 1;
+            margin-left: 0.5rem;
+            font-family: monospace;
+        }
+        .demo-form-area {
+            padding: 1.75rem;
+        }
+        .demo-form-title {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+        .demo-field-group { margin-bottom: 1rem; }
+        .demo-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        .demo-input {
+            width: 100%;
+            height: 38px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0 0.75rem;
+            font-size: 0.85rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            position: relative;
+            transition: border-color 0.3s, background 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .demo-input.active {
+            border-color: #1a56db;
+            box-shadow: 0 0 0 3px rgba(26,86,219,0.12);
+        }
+        .demo-input.filled { border-color: #059669; background: var(--step-bg); }
+        .demo-input-text {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        /* Cursor */
+        .demo-cursor {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            pointer-events: none;
+            z-index: 100;
+            transition: left 0.6s cubic-bezier(0.25,0.46,0.45,0.94), top 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        .cursor-arrow {
+            width: 28px;
+            height: 28px;
+        }
+        /* Click ripple */
+        .click-ripple {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(26,86,219,0.25);
+            transform: scale(0);
+            pointer-events: none;
+        }
+        .click-ripple.animate {
+            animation: ripple 0.5s ease-out forwards;
+        }
+        @keyframes ripple {
+            to { transform: scale(2.5); opacity: 0; }
+        }
+
+        /* Typing cursor blink */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 0.7s step-end infinite;
+            color: #1a56db;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .demo-submit-btn {
+            background: linear-gradient(135deg, #1a365d, #1a56db);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .demo-submit-btn.visible { opacity: 1; }
+        .demo-submit-btn.pulse {
+            animation: btnPulse 0.6s ease;
+        }
+        @keyframes btnPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+            100% { transform: scale(1); }
+        }
+
+        /* Login prompt overlay */
+        .demo-login-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15,23,42,0.85);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+            z-index: 10;
+        }
+        .demo-login-overlay.show { opacity: 1; pointer-events: auto; }
+        .demo-login-box {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem 2.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            max-width: 340px;
+            width: 90%;
+        }
+        .demo-login-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .demo-login-title-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        .demo-login-title-en { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem; }
+
+        /* ── DEMO EXTRAS ── */
+        .demo-step-tracker {
+            display: flex; justify-content: center; gap: 0.5rem;
+            flex-wrap: wrap; margin-bottom: 1.25rem;
+        }
+        .demo-step-pip {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--border-color); color: var(--text-muted);
+            font-size: 0.7rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s, color 0.3s, transform 0.2s;
+            flex-shrink: 0;
+        }
+        .demo-step-pip.active {
+            background: var(--accent-blue); color: #fff;
+            transform: scale(1.2);
+        }
+        .demo-step-pip.done {
+            background: #059669; color: #fff;
+        }
+        .demo-instruction {
+            text-align: center;
+            min-height: 2.2rem;
+            margin-bottom: 1rem;
+        }
+        #demoInstructionText {
+            display: inline-block;
+            background: rgba(26,86,219,0.10);
+            border: 1px solid rgba(26,86,219,0.18);
+            border-radius: 50px;
+            padding: 0.3rem 1.1rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
+            transition: opacity 0.3s;
+        }
+        .demo-section-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #1a365d, #1a56db);
+            color: #fff;
+            border-radius: 6px;
+            padding: 0.22rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
+            transition: opacity 0.3s;
+        }
+        .demo-section-group {
+            margin-bottom: 0.85rem;
+            opacity: 0.35;
+            transition: opacity 0.4s;
+        }
+        .demo-section-group.active-section { opacity: 1; }
+        .demo-group-label {
+            font-size: 0.78rem; font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
+        }
+        .demo-progress-wrap {
+            max-width: 820px; margin: 1rem auto 0;
+            height: 5px; background: var(--border-color);
+            border-radius: 4px; overflow: hidden;
+        }
+        .demo-progress-bar {
+            height: 100%; width: 0;
+            background: linear-gradient(90deg, #1a56db, #059669);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* ===================== REQUIREMENTS SECTION ===================== */
+        .requirements-section { padding: 5rem 0; background: var(--bg-primary); transition: background 0.3s; }
+        .req-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .req-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+        .req-title-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .req-title-en { font-size: 0.8rem; font-weight: 600; color: var(--accent-blue); margin-bottom: 0.3rem; }
+        .req-text-am {
+            font-family: 'Noto Sans Ethiopic', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .req-text-en { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* ===================== FOOTER ===================== */
+        .site-footer {
+            background: linear-gradient(160deg, #1a365d 0%, #0f2445 60%, #0a1628 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        [data-theme="dark"] .site-footer {
+            background: linear-gradient(160deg, #0a1628 0%, #0f172a 100%);
+        }
+
+        /* Wave at the top */
+        .footer-wave {
+            line-height: 0;
+            overflow: hidden;
+        }
+        .footer-wave svg { display: block; width: 100%; height: 40px; }
+
+        /* Subtle dot pattern overlay */
+        .footer-inner {
+            padding: 2rem 0 0;
+            position: relative;
+        }
+        .footer-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+        }
+
+        /* ── MAIN ROW ── */
+        .footer-main {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr 1fr;
+            gap: 2.5rem;
+            padding-bottom: 1.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+        }
+        @media (max-width: 768px) {
+            .footer-main { grid-template-columns: 1fr; gap: 1.5rem; }
+        }
+
+        /* Brand column */
+        .footer-logo-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.85rem;
+        }
+        .footer-logo-icon { font-size: 2rem; flex-shrink: 0; }
+        .footer-brand-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .footer-brand-sub {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.4;
+            margin-top: 0.1rem;
+        }
+        .footer-tagline {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.55);
+            line-height: 1.75;
+            font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
+            max-width: 320px;
+        }
+
+        /* Column titles */
+        .footer-col-title {
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #fbbf24;
+            margin-bottom: 0.9rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Links grid — 2 columns within the links column */
+        .footer-links-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3rem 0.5rem;
+        }
+        .footer-link {
+            color: rgba(255,255,255,0.58);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.22rem 0;
+            transition: color 0.2s, padding-left 0.2s;
+            display: block;
+            white-space: nowrap;
+        }
+        .footer-link:hover {
+            color: #fbbf24;
+            padding-left: 4px;
+        }
+
+        /* Contact items */
+        .footer-contact-items { display: flex; flex-direction: column; gap: 0.55rem; }
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.62);
+        }
+        .footer-contact-icon {
+            color: #fbbf24;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            width: 16px;
+        }
+
+        /* ── BOTTOM BAR ── */
+        .footer-bottom-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 0.9rem 0 1rem;
+        }
+        .footer-copyright {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.3);
+        }
+        .footer-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .footer-badge {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 0.18rem 0.65rem;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+        }
+
+        /* ===================== UTILITY ===================== */
+        .lang-am { display: block; }
+        .lang-en { display: none; }
+        body.show-en .lang-am { display: none !important; }
+        body.show-en .lang-en { display: block !important; }
+        /* For inline elements */
+        span.lang-am { display: inline; }
+        span.lang-en { display: none; }
+        body.show-en span.lang-am { display: none !important; }
+        body.show-en span.lang-en { display: inline !important; }
+
+        .section-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title-am { font-size: 1.5rem; }
+            .hero-stats { gap: 0; }
+            .hero-stat { padding: 0.5rem 0.85rem; }
+            .step-connector { display: none; }
+            .certificate-mockup { width: 270px; }
+            .cert-ring { display: none; }
+            .cert-float-badge { display: none; }
+            .hero-section { min-height: auto; padding: 4rem 0 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav class="top-navbar">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'home' %}" class="navbar-brand-text">
+                🏛️ <span>Digital Woreda</span>
+            </a>
+            <div class="nav-actions">
+                <!-- Language Toggle -->
+                <button class="lang-toggle" id="langToggleBtn" onclick="toggleLanguage()">
+                    <span id="langLabel">EN</span>
+                </button>
+                <!-- Dark/Light Mode Toggle -->
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <i class="bi bi-moon-fill" id="themeIcon"></i>
+                    <span id="themeLabel">Dark</span>
+                </button>
+                {% if user.is_authenticated and not user.is_staff %}
+                <span style="color:rgba(255,255,255,0.75);font-size:0.82rem;font-weight:500">
+                    <i class="bi bi-person-circle me-1"></i>{{ user.first_name|default:user.email }}
+                </span>
+                <a href="{% url 'index' %}" class="btn btn-warning btn-sm fw-bold">
+                    <i class="bi bi-pencil-square me-1"></i>
+                    <span class="lang-am">ምዝገባ ጀምሩ</span>
+                    <span class="lang-en">Start Registration</span>
+                </a>
+                <a href="{% url 'my_registrations' %}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-list-check me-1"></i>
+                    <span class="lang-am">ሁኔታ ክትትል</span>
+                    <span class="lang-en">My Status</span>
+                </a>
+                <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
+                    <span class="lang-am">ውጣ</span>
+                    <span class="lang-en">Logout</span>
+                </a>
+                {% else %}
+                <a href="{% url 'register' %}" class="btn btn-outline-light btn-sm fw-bold">
+                    <span class="lang-am">ተመዝገቡ</span>
+                    <span class="lang-en">Register</span>
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-warning btn-sm fw-bold">
+                    <span class="lang-am">ይግቡ</span>
+                    <span class="lang-en">Login</span>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ===================== HERO SECTION ===================== -->
+<section class="hero-section">
+
+    <!-- Animated particles -->
+    <div class="hero-particles" id="heroParticles"></div>
+
+    <!-- Grid overlay -->
+    <div class="hero-grid-overlay"></div>
+
+    <!-- Glowing orbs -->
+    <div class="hero-orb orb-1"></div>
+    <div class="hero-orb orb-2"></div>
+    <div class="hero-orb orb-3"></div>
+
+    <div class="container" style="position:relative;z-index:2">
+        <div class="row align-items-center g-4">
+
+            <!-- ── LEFT: TEXT ── -->
+            <div class="col-lg-6">
+
+                <!-- Blinking badge -->
+                <div class="hero-badge hero-fade-in d1">
+                    <span class="badge-dot"></span>
+                    <span class="lang-am">🇪🇹 አዲስ አበባ ዲጂታል ወረዳ ሲስተም</span>
+                    <span class="lang-en">🇪🇹 Addis Ababa Digital Woreda System</span>
+                </div>
+
+                <!-- Main title -->
+                <div class="lang-am hero-fade-in d2">
+                    <div class="hero-title-am">የፌደራል ሲቪል ምዝገባ<br>እና የነዋሪነት አገልግሎት ኤጀንሲ</div>
+                    <div class="hero-title-en">Civil Registration &amp; Resident Service Agency (CRRSA)</div>
+                </div>
+                <div class="lang-en hero-fade-in d2" style="display:none">
+                    <div class="hero-title-am" style="font-size:1.75rem">Federal Civil Registration &amp;<br>Resident Service Agency</div>
+                    <div class="hero-title-en">Digital Birth Registration Portal — CRRSA</div>
+                </div>
+
+                <!-- Description -->
+                <div class="hero-fade-in d3">
+                    <p class="hero-desc-am lang-am">የልደት ምስክር ወረቀት ማውጣት ቀላልና ፈጣን ሆኗል። ቤትዎ ሆነው ለሕፃናቸው ልደት ምዝገባ ማመልከቻ ማስገባት ይቻላል።</p>
+                    <p class="hero-desc-en lang-en" style="display:none">Registering your child's birth is now simple and fast. Submit your application from home and receive an officially approved certificate with a QR code.</p>
+                </div>
+
+                <!-- CTA buttons -->
+                <div class="hero-cta hero-fade-in d4">
+                    {% if user.is_authenticated and user.is_staff %}
+                    <!-- Admin is logged in — show logout prompt instead -->
+                    <div style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);border-radius:10px;padding:0.85rem 1.25rem;max-width:380px">
+                        <div style="color:#fbbf24;font-weight:700;font-size:0.88rem;margin-bottom:0.4rem">
+                            <i class="bi bi-shield-lock me-1"></i>
+                            <span class="lang-am">Admin ሆነው ገብተዋል</span>
+                            <span class="lang-en">Logged in as Admin</span>
+                        </div>
+                        <div style="color:rgba(255,255,255,0.7);font-size:0.8rem;margin-bottom:0.75rem;font-family:'Noto Sans Ethiopic',sans-serif">
+                            <span class="lang-am">ምዝገባ ለማስገባት መጀመሪያ ውጡ፣ ከዚያ እንደ ተጠቃሚ ይግቡ።</span>
+                            <span class="lang-en">To submit a registration, log out first then sign in as a regular user.</span>
+                        </div>
+                        <a href="{% url 'logout' %}" class="btn-hero-primary" style="font-size:0.85rem;padding:0.65rem 1.5rem">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span class="lang-am">ውጡ / Logout</span>
+                            <span class="lang-en">Logout</span>
+                        </a>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'index' %}" class="btn-hero-primary">
+                        <i class="bi bi-pencil-square"></i>
+                        <span class="lang-am">ምዝገባ ጀምሩ</span>
+                        <span class="lang-en">Start Registration</span>
+                    </a>
+                    <a href="#how-it-works" class="btn-hero-secondary">
+                        <i class="bi bi-play-circle"></i>
+                        <span class="lang-am">እንዴት ይሰራል?</span>
+                        <span class="lang-en">How it Works?</span>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Stats -->
+                <div class="hero-stats hero-fade-in d5">
+                    <div class="hero-stat">
+                        <span class="hero-stat-num" id="stat1">100%</span>
+                        <span class="hero-stat-label lang-am">ዲጂታል ሂደት</span>
+                        <span class="hero-stat-label lang-en">Digital Process</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num" id="stat2">QR</span>
+                        <span class="hero-stat-label lang-am">የተረጋገጠ ሰርቲፊኬት</span>
+                        <span class="hero-stat-label lang-en">Verified Certificate</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num" id="stat3">24/7</span>
+                        <span class="hero-stat-label lang-am">ሁልጊዜ ዝግጁ</span>
+                        <span class="hero-stat-label lang-en">Always Available</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-num" id="stat4">100%</span>
+                        <span class="hero-stat-label lang-am">ደህንነቱ ተጠብቋል</span>
+                        <span class="hero-stat-label lang-en">Secured</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── RIGHT: CERTIFICATE MOCKUP ── -->
+            <div class="col-lg-6">
+                <div class="hero-visual">
+                    <!-- Rotating rings -->
+                    <div class="cert-ring ring-1"></div>
+                    <div class="cert-ring ring-2"></div>
+
+                    <!-- Floating info badges -->
+                    <div class="cert-float-badge top-left">
+                        🔒 <span class="lang-am">ኦፊሴላዊ ሰርቲፊኬት</span>
+                           <span class="lang-en">Official Certificate</span>
+                    </div>
+                    <div class="cert-float-badge bottom-right">
+                        ✅ <span class="lang-am">ፀደቀ</span>
+                           <span class="lang-en">Approved</span>
+                    </div>
+
+                    <!-- Certificate card -->
+                    <div class="certificate-mockup">
+                        <div class="cert-header">
+                            <div class="cert-logo">🏛️</div>
+                            <div class="cert-title-am">
+                                የፌደራል ሲቪል ምዝገባ እና የነዋሪነት አገልግሎት ኤጀንሲ<br>
+                                <span style="font-size:0.6rem;font-weight:400">Civil Registration &amp; Resident Service Agency (CRRSA)</span>
+                            </div>
+                            <div style="margin-top:0.4rem;font-family:'Noto Sans Ethiopic',sans-serif;font-size:0.78rem;font-weight:800;color:#1a365d">
+                                የልደት ምስክር ወረቀት
+                            </div>
+                            <div style="font-size:0.6rem;font-weight:700;color:#d97706;letter-spacing:0.06em">
+                                OFFICIAL BIRTH CERTIFICATE
+                            </div>
+                        </div>
+                        <div class="cert-body">
+                            <div class="cert-row">
+                                <span class="cert-label">የሕፃኑ ስም / Child Full Name</span>
+                                <span class="cert-val typing" id="certName">አበበ ካሳ ደምሴ</span>
+                            </div>
+                            <div class="cert-row">
+                                <span class="cert-label">ጾታ &amp; ቀን / Sex &amp; Date</span>
+                                <span class="cert-val">Male | 12/4/2016 ዓ.ም</span>
+                            </div>
+                            <div class="cert-row">
+                                <span class="cert-label">የአባት ስም / Father</span>
+                                <span class="cert-val" id="certFather">ካሳ ደምሴ ወርቁ</span>
+                            </div>
+                            <div class="cert-row">
+                                <span class="cert-label">የእናት ስም / Mother</span>
+                                <span class="cert-val" id="certMother">ትዕግስት አለሙ</span>
+                            </div>
+                            <div class="cert-row">
+                                <span class="cert-label">ምዝገባ ቀን / Reg. Date</span>
+                                <span class="cert-val">August 31, 2026</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-end mt-2">
+                                <span class="cert-badge">
+                                    <span class="badge-pulse"></span>
+                                    ✓ Approved / ፀደቀ
+                                </span>
+                                <div class="cert-qr"><i class="bi bi-qr-code"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ===================== ABOUT SECTION ===================== -->
+<section class="info-section" id="about">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-label lang-am">ስለ ስርዓቱ</div>
+            <div class="section-label lang-en">About the System</div>
+            <div class="section-title-am lang-am">ዲጂታል ወረዳ ምንድን ነው?</div>
+            <div class="section-title-en lang-am">What is Digital Woreda?</div>
+            <div class="lang-en" style="font-size:1.5rem; font-weight:700; color:var(--text-primary); font-family:'Inter',sans-serif">What is Digital Woreda?</div>
+            <div class="section-divider mx-auto"></div>
+        </div>
+    </div>
+
+    <!-- Infinite auto-scrolling marquee — full width, no gaps -->
+    <div class="feat-marquee-outer">
+        <div class="feat-marquee-track" id="featMarqueeTrack">
+
+            <!-- ── ORIGINAL SET ── -->
+            <div class="feat-card c-blue">
+                <div class="feat-icon-box">📋</div>
+                <div class="feat-title-am lang-am">ኦፊሴላዊ ምዝገባ</div>
+                <div class="feat-title-en">Official Registration</div>
+                <p class="feat-text-am lang-am">ለልጅዎ ልደት ምስክር ወረቀት ኦፊሴላዊ ማስረጃ ለማውጣት ዲጂታሉን ስርዓት ይጠቀሙ።</p>
+                <p class="feat-text-en lang-en">Use the digital system to obtain an official birth certificate through the Civil Registration &amp; Resident Service Agency.</p>
+                <span class="feat-tag lang-am">✅ ኦፊሴላዊ</span>
+                <span class="feat-tag lang-en">✅ Official</span>
+            </div>
+
+            <div class="feat-card c-green">
+                <div class="feat-icon-box">🔒</div>
+                <div class="feat-title-am lang-am">ደህንነቱ የተጠበቀ</div>
+                <div class="feat-title-en">Secure &amp; Trusted</div>
+                <p class="feat-text-am lang-am">የቀረቡት ሰነዶች እና ፎቶዎች ደህንነቱ በተጠበቀ ሁኔታ ይቀመጣሉ። QR ኮድ ለማረጋገጫ ይሰጣል።</p>
+                <p class="feat-text-en lang-en">All documents and photos are securely stored. Each certificate includes a QR code for instant authenticity verification.</p>
+                <span class="feat-tag lang-am">🔐 ደህንነቱ ተጠብቋል</span>
+                <span class="feat-tag lang-en">🔐 256-bit Secured</span>
+            </div>
+
+            <div class="feat-card c-gold">
+                <div class="feat-icon-box">⚡</div>
+                <div class="feat-title-am lang-am">ፈጣን አገልግሎት</div>
+                <div class="feat-title-en">Fast &amp; Efficient</div>
+                <p class="feat-text-am lang-am">ቀደም ሲል ቀናት ወይም ሳምንታት የሚወስደው ሂደት ዛሬ ዲጂታሉ ስርዓት ፈጣን ያደርጋል።</p>
+                <p class="feat-text-en lang-en">What used to take days or weeks is now streamlined. Submit once, track status, and receive approval — all online.</p>
+                <span class="feat-tag lang-am">⚡ ፈጣን ሂደት</span>
+                <span class="feat-tag lang-en">⚡ Fast Process</span>
+            </div>
+
+            <div class="feat-card c-purple">
+                <div class="feat-icon-box">🌐</div>
+                <div class="feat-title-am lang-am">ሁለቱ ቋንቋዎች</div>
+                <div class="feat-title-en">Bilingual Support</div>
+                <p class="feat-text-am lang-am">ስርዓቱ በአማርኛም ሆነ በእንግሊዝኛ ተዘጋጅቷል። ሁሉም ወረቀቶች ሁለቱ ቋንቋ ይዘዋል።</p>
+                <p class="feat-text-en lang-en">The system supports both Amharic and English. All certificates and forms are presented in both languages.</p>
+                <span class="feat-tag lang-am">🌐 አማርኛ / English</span>
+                <span class="feat-tag lang-en">🌐 Amharic / English</span>
+            </div>
+
+            <!-- ── DUPLICATE SET (for seamless loop) ── -->
+            <div class="feat-card c-blue" aria-hidden="true">
+                <div class="feat-icon-box">📋</div>
+                <div class="feat-title-am lang-am">ኦፊሴላዊ ምዝገባ</div>
+                <div class="feat-title-en">Official Registration</div>
+                <p class="feat-text-am lang-am">ለልጅዎ ልደት ምስክር ወረቀት ኦፊሴላዊ ማስረጃ ለማውጣት ዲጂታሉን ስርዓት ይጠቀሙ።</p>
+                <p class="feat-text-en lang-en">Use the digital system to obtain an official birth certificate through the Civil Registration &amp; Resident Service Agency.</p>
+                <span class="feat-tag lang-am">✅ ኦፊሴላዊ</span>
+                <span class="feat-tag lang-en">✅ Official</span>
+            </div>
+
+            <div class="feat-card c-green" aria-hidden="true">
+                <div class="feat-icon-box">🔒</div>
+                <div class="feat-title-am lang-am">ደህንነቱ የተጠበቀ</div>
+                <div class="feat-title-en">Secure &amp; Trusted</div>
+                <p class="feat-text-am lang-am">የቀረቡት ሰነዶች እና ፎቶዎች ደህንነቱ በተጠበቀ ሁኔታ ይቀመጣሉ። QR ኮድ ለማረጋገጫ ይሰጣል።</p>
+                <p class="feat-text-en lang-en">All documents and photos are securely stored. Each certificate includes a QR code for instant authenticity verification.</p>
+                <span class="feat-tag lang-am">🔐 ደህንነቱ ተጠብቋል</span>
+                <span class="feat-tag lang-en">🔐 256-bit Secured</span>
+            </div>
+
+            <div class="feat-card c-gold" aria-hidden="true">
+                <div class="feat-icon-box">⚡</div>
+                <div class="feat-title-am lang-am">ፈጣን አገልግሎት</div>
+                <div class="feat-title-en">Fast &amp; Efficient</div>
+                <p class="feat-text-am lang-am">ቀደም ሲል ቀናት ወይም ሳምንታት የሚወስደው ሂደት ዛሬ ዲጂታሉ ስርዓት ፈጣን ያደርጋል።</p>
+                <p class="feat-text-en lang-en">What used to take days or weeks is now streamlined. Submit once, track status, and receive approval — all online.</p>
+                <span class="feat-tag lang-am">⚡ ፈጣን ሂደት</span>
+                <span class="feat-tag lang-en">⚡ Fast Process</span>
+            </div>
+
+            <div class="feat-card c-purple" aria-hidden="true">
+                <div class="feat-icon-box">🌐</div>
+                <div class="feat-title-am lang-am">ሁለቱ ቋንቋዎች</div>
+                <div class="feat-title-en">Bilingual Support</div>
+                <p class="feat-text-am lang-am">ስርዓቱ በአማርኛም ሆነ በእንግሊዝኛ ተዘጋጅቷል። ሁሉም ወረቀቶች ሁለቱ ቋንቋ ይዘዋል።</p>
+                <p class="feat-text-en lang-en">The system supports both Amharic and English. All certificates and forms are presented in both languages.</p>
+                <span class="feat-tag lang-am">🌐 አማርኛ / English</span>
+                <span class="feat-tag lang-en">🌐 Amharic / English</span>
+            </div>
+
+        </div><!-- /track -->
+    </div><!-- /marquee-outer -->
+
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section class="steps-section" id="how-it-works">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-label lang-am">አጠቃቀም</div>
+            <div class="section-label lang-en" style="display:none">How to Use</div>
+            <div class="section-title-am lang-am">ምዝገባው እንዴት ይሰራል?</div>
+            <div class="section-title-en lang-am">How Does Registration Work?</div>
+            <div class="section-title-am lang-en" style="display:none; font-size:1.5rem; font-weight:700; color:var(--text-primary)">How Does Registration Work?</div>
+            <div class="section-divider mx-auto"></div>
+        </div>
+        <div class="row g-4">
+            <!-- Step 1 -->
+            <div class="col-md-6 col-lg-3 position-relative">
+                <div class="step-card">
+                    <div class="step-num">1</div>
+                    <div class="step-title-am lang-am">መለያ ይፍጠሩ</div>
+                    <div class="step-title-en">Create an Account</div>
+                    <p class="step-text-am lang-am">ማመልከቻ ለማስገባት መጀመሪያ መለያ መፍጠር ያስፈልጋል።</p>
+                    <p class="step-text-en lang-en" style="display:none">You must first create an account and log in before submitting any registration form.</p>
+                </div>
+                <div class="step-connector d-none d-lg-block"><i class="bi bi-arrow-right-circle-fill"></i></div>
+            </div>
+            <!-- Step 2 -->
+            <div class="col-md-6 col-lg-3 position-relative">
+                <div class="step-card">
+                    <div class="step-num">2</div>
+                    <div class="step-title-am lang-am">ቅጹን ይሙሉ</div>
+                    <div class="step-title-en">Fill the Form</div>
+                    <p class="step-text-am lang-am">የሕፃኑን፣ የወላጆቹን እና የአቅራቢውን መረጃ ሁሉ ሙሉ።</p>
+                    <p class="step-text-en lang-en" style="display:none">Fill in all required information about the child, parents, and the applicant — all fields are mandatory.</p>
+                </div>
+                <div class="step-connector d-none d-lg-block"><i class="bi bi-arrow-right-circle-fill"></i></div>
+            </div>
+            <!-- Step 3 -->
+            <div class="col-md-6 col-lg-3 position-relative">
+                <div class="step-card">
+                    <div class="step-num">3</div>
+                    <div class="step-title-am lang-am">ሰነዶቹን ያስገቡ</div>
+                    <div class="step-title-en">Upload Documents</div>
+                    <p class="step-text-am lang-am">የሕፃኑን ፎቶ፣ የሆስፒታል ሰርቲፊኬት እና የወላጆቹን ፎቶ ያስፈልጋሉ።</p>
+                    <p class="step-text-en lang-en" style="display:none">Upload the child's photo, hospital birth notification, and photos of both parents.</p>
+                </div>
+                <div class="step-connector d-none d-lg-block"><i class="bi bi-arrow-right-circle-fill"></i></div>
+            </div>
+            <!-- Step 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-num">4</div>
+                    <div class="step-title-am lang-am">ሰርቲፊኬቱን ይቀበሉ</div>
+                    <div class="step-title-en">Receive Certificate</div>
+                    <p class="step-text-am lang-am">ወረዳ ሠራተኛ አረጋግጦ ሲያፀድቅ QR ኮድ ያለው ሰርቲፊኬት ማውሎድ ይቻላል።</p>
+                    <p class="step-text-en lang-en" style="display:none">Once the Woreda registrar reviews and approves, you can download the official certificate with a verification QR code.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== ANIMATED DEMO SECTION ===================== -->
+<section class="demo-section" id="demo">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-label lang-am">ቀጥታ ማሳያ</div>
+            <div class="section-label lang-en" style="display:none">Live Guide</div>
+            <div class="section-title-am lang-am">ቅጹ እንዴት ይሞላ?</div>
+            <div class="section-title-en lang-am">How to Fill the Form</div>
+            <div class="section-title-am lang-en" style="display:none; font-size:1.5rem; font-weight:700; color:var(--text-primary)">How to Fill the Form</div>
+            <div class="section-divider mx-auto"></div>
+            <p class="lang-am" style="font-family:'Noto Sans Ethiopic',sans-serif; font-size:0.9rem; color:var(--text-secondary); margin-top:-0.5rem">ምዝገባው ቅጹን እንዴት ሙሉ ለሙሉ መሙላት እንዳለበት ማሳያው ያሳያሌ — ያለ ማቋረጥ ይሄዳል</p>
+            <p class="lang-en" style="display:none; font-size:0.88rem; color:var(--text-secondary); margin-top:-0.5rem">A continuous, non-stop guided demo showing every step of the birth registration form in both Amharic and English</p>
+        </div>
+
+        <!-- ══ STEP TRACKER ══ -->
+        <div class="demo-step-tracker" id="demoStepTracker">
+            <!-- filled by JS -->
+        </div>
+
+        <!-- ══ INSTRUCTION BANNER ══ -->
+        <div class="demo-instruction" id="demoInstruction">
+            <span id="demoInstructionText"></span>
+        </div>
+
+        <div style="position:relative; max-width:820px; margin:0 auto">
+            <!-- Blue cursor arrow -->
+            <svg id="demoCursor" viewBox="0 0 28 28"
+                 style="position:absolute;width:28px;height:28px;pointer-events:none;z-index:100;
+                        transition:left 0.55s cubic-bezier(.25,.46,.45,.94),top 0.55s cubic-bezier(.25,.46,.45,.94);
+                        left:60px;top:60px">
+                <polygon points="4,2 4,22 9,17 13,26 16,25 12,16 19,16"
+                         fill="#1a56db" stroke="#fff" stroke-width="1.5"/>
+            </svg>
+
+            <div class="demo-wrapper" id="demoWrapper">
+                <!-- Browser chrome bar -->
+                <div class="demo-topbar">
+                    <div class="demo-dot dot-red"></div>
+                    <div class="demo-dot dot-yellow"></div>
+                    <div class="demo-dot dot-green"></div>
+                    <div class="demo-url">127.0.0.1:8000/register-birth</div>
+                </div>
+
+                <!-- Form content -->
+                <div class="demo-form-area" id="demoFormArea">
+
+                    <!-- Section badge -->
+                    <div class="demo-section-badge" id="demoSectionBadge">
+                        <span id="demoSectionText"></span>
+                    </div>
+
+                    <!-- Form title row -->
+                    <div class="demo-form-title">
+                        �
+                        <span class="lang-am">የልደት ምዝገባ ቅጽ</span>
+                        <span class="lang-en" style="display:none">Birth Registration Form</span>
+                        <span style="font-size:0.7rem;color:#718096;margin-left:0.5rem">
+                            — <span class="lang-am">ሁሉም (*) ምልክት ያለባቸው መስኮች አስፈላጊ ናቸው</span>
+                               <span class="lang-en" style="display:none">All (*) fields are required</span>
+                        </span>
+                    </div>
+
+                    <!-- ── SECTION 1: CHILD ── -->
+                    <div class="demo-section-group" id="demoSec1">
+                        <div class="demo-group-label lang-am">👶 1. የሕፃኑ መረጃ / Child Information</div>
+                        <div class="demo-group-label lang-en" style="display:none">👶 1. Child Information / የሕፃኑ መረጃ</div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">የሕፃኑ ሙሉ ስም (አማርኛ)</span>
+                                        <span class="lang-en" style="display:none">Child Full Name (Amharic)</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField1"><span class="demo-input-text" id="dText1"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">የሕፃኑ ሙሉ ስም (እንግሊዝኛ)</span>
+                                        <span class="lang-en" style="display:none">Child Full Name (English)</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField2"><span class="demo-input-text" id="dText2"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">ጾታ</span>
+                                        <span class="lang-en" style="display:none">Sex</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField3"><span class="demo-input-text" id="dText3"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">የልደት ቀን (ዓ.ም)</span>
+                                        <span class="lang-en" style="display:none">Date of Birth (E.C.)</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField4"><span class="demo-input-text" id="dText4"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">ፎቶ ስቅሉ</span>
+                                        <span class="lang-en" style="display:none">Upload Photo</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField5"><span class="demo-input-text" id="dText5"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── SECTION 2: PARENTS ── -->
+                    <div class="demo-section-group" id="demoSec2">
+                        <div class="demo-group-label lang-am">👨‍👩‍👦 2. የወላጆች መረጃ / Parents Information</div>
+                        <div class="demo-group-label lang-en" style="display:none">👨‍👩‍👦 2. Parents Information / የወላጆች መረጃ</div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">የአባት ሙሉ ስም (አማርኛ)</span>
+                                        <span class="lang-en" style="display:none">Father Full Name (Amharic)</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField6"><span class="demo-input-text" id="dText6"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">የአባት ሙሉ ስም (እንግሊዝኛ)</span>
+                                        <span class="lang-en" style="display:none">Father Full Name (English)</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField7"><span class="demo-input-text" id="dText7"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">የእናት ሙሉ ስም (አማርኛ)</span>
+                                        <span class="lang-en" style="display:none">Mother Full Name (Amharic)</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField8"><span class="demo-input-text" id="dText8"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">የእናት ሙሉ ስም (እንግሊዝኛ)</span>
+                                        <span class="lang-en" style="display:none">Mother Full Name (English)</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField9"><span class="demo-input-text" id="dText9"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── SECTION 3: LOCATION ── -->
+                    <div class="demo-section-group" id="demoSec3">
+                        <div class="demo-group-label lang-am">📍 3. የትውልድ ቦታ እና ሕክምና / Location &amp; Contact</div>
+                        <div class="demo-group-label lang-en" style="display:none">� 3. Location &amp; Contact / የትውልድ ቦታ</div>
+                        <div class="row g-2">
+                            <div class="col-4">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">ክፍለ ከተማ</span>
+                                        <span class="lang-en" style="display:none">Subcity</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField10"><span class="demo-input-text" id="dText10"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">ወረዳ</span>
+                                        <span class="lang-en" style="display:none">Woreda</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField11"><span class="demo-input-text" id="dText11"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">የሆስፒታሉ ስም</span>
+                                        <span class="lang-en" style="display:none">Hospital Name</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField12"><span class="demo-input-text" id="dText12"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── SECTION 4: APPLICANT ── -->
+                    <div class="demo-section-group" id="demoSec4">
+                        <div class="demo-group-label lang-am">🧑‍💼 4. የአቅራቢ መረጃ / Applicant Details</div>
+                        <div class="demo-group-label lang-en" style="display:none">🧑‍💼 4. Applicant Details / የአቅራቢ መረጃ</div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">የአቅራቢ ስም (አማርኛ)</span>
+                                        <span class="lang-en" style="display:none">Applicant Name (Amharic)</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField13"><span class="demo-input-text" id="dText13"></span></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="demo-field-group">
+                                    <span class="demo-label">
+                                        <span class="lang-am">ዝምድና / ስልክ</span>
+                                        <span class="lang-en" style="display:none">Relation / Phone</span>
+                                        <span style="color:#ef4444">*</span>
+                                    </span>
+                                    <div class="demo-input" id="dField14"><span class="demo-input-text" id="dText14"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit button (appears at end) -->
+                    <button class="demo-submit-btn" id="demoSubmitBtn" disabled>
+                        <i style="margin-right:0.4rem">📨</i>
+                        <span class="lang-am">ምዝገባ አስገባ</span>
+                        <span class="lang-en" style="display:none">Submit Registration</span>
+                    </button>
+
+                </div><!-- /demo-form-area -->
+            </div><!-- /demo-wrapper -->
+        </div><!-- /relative container -->
+
+        <!-- Progress bar at the bottom -->
+        <div class="demo-progress-wrap">
+            <div class="demo-progress-bar" id="demoProgressBar"></div>
+        </div>
+    </div><!-- /container -->
+</section>
+
+<!-- ===================== REQUIREMENTS SECTION ===================== -->
+<section class="requirements-section" id="requirements">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-label lang-am">ምን ያስፈልጋል?</div>
+            <div class="section-label lang-en">What You Need</div>
+            <div class="section-title-am lang-am">የሚያስፈልጉ ሰነዶች</div>
+            <div class="section-title-en lang-am">Required Documents for Birth Registration</div>
+            <div class="section-title-en lang-en" style="font-size:1.5rem; font-weight:700; color:var(--text-primary); font-family:'Inter',sans-serif">Required Documents for Birth Registration</div>
+            <div class="section-divider mx-auto"></div>
+            <p class="lang-am" style="font-family:'Noto Sans Ethiopic',sans-serif; font-size:0.88rem; color:var(--text-secondary); max-width:580px; margin:0 auto">
+                ልደት ምዝገባ ማመልከቻ ሲያስገቡ ከዚህ በታች ያሉ ሰነዶች እና ፎቶዎች ያስፈልጋሉ።
+            </p>
+            <p class="lang-en" style="font-size:0.88rem; color:var(--text-secondary); max-width:560px; margin:0 auto">
+                The following documents and photos are required when submitting a birth registration application.
+            </p>
+        </div>
+        <div class="row g-3 justify-content-center" style="max-width:860px; margin:0 auto">
+            <div class="col-md-6">
+                <div class="req-card">
+                    <span class="req-icon">📸</span>
+                    <div>
+                        <div class="req-title-am lang-am">የሕፃኑ ፎቶ</div>
+                        <div class="req-title-en">Child's Passport Photo</div>
+                        <p class="req-text-am lang-am">የሕፃኑ ፓስፖርት መጠን ያለው ፎቶ ያስፈልጋል።</p>
+                        <p class="req-text-en lang-en" style="display:none">A recent passport-size photograph of the child.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="req-card">
+                    <span class="req-icon">🏥</span>
+                    <div>
+                        <div class="req-title-am lang-am">የሆስፒታል ሰነድ</div>
+                        <div class="req-title-en">Hospital Birth Document</div>
+                        <p class="req-text-am lang-am">ሕፃኑ የተወለደበት ሆስፒታል ወይም ሕክምና ቤት የሰጠው ሰርቲፊኬት።</p>
+                        <p class="req-text-en lang-en" style="display:none">Official birth notification from the hospital or health facility where the child was born.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="req-card">
+                    <span class="req-icon">👨</span>
+                    <div>
+                        <div class="req-title-am lang-am">የአባት ፎቶ / መታወቂያ</div>
+                        <div class="req-title-en">Father's Photo / ID</div>
+                        <p class="req-text-am lang-am">የአባቱ ፎቶ ወይም ኦፊሴላዊ መታወቂያ ሰርቲፊኬት።</p>
+                        <p class="req-text-en lang-en" style="display:none">A photo or official identification document of the father.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="req-card">
+                    <span class="req-icon">👩</span>
+                    <div>
+                        <div class="req-title-am lang-am">የእናት ፎቶ / መታወቂያ</div>
+                        <div class="req-title-en">Mother's Photo / ID</div>
+                        <p class="req-text-am lang-am">የእናቱ ፎቶ ወይም ኦፊሴላዊ መታወቂያ ሰርቲፊኬት።</p>
+                        <p class="req-text-en lang-en" style="display:none">A photo or official identification document of the mother.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="site-footer">
+    <!-- Top wave divider -->
+    <div class="footer-wave">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,30 C360,60 1080,0 1440,30 L1440,0 L0,0 Z" fill="var(--bg-primary)"/>
+        </svg>
+    </div>
+
+    <div class="footer-inner">
+        <div class="container">
+
+            <!-- ── MAIN ROW ── -->
+            <div class="footer-main">
+
+                <!-- Brand -->
+                <div class="footer-brand-col">
+                    <div class="footer-logo-row">
+                        <span class="footer-logo-icon">🏛️</span>
+                        <div>
+                            <div class="footer-brand-name">Digital Woreda</div>
+                            <div class="footer-brand-sub">CRRSA — Civil Registration &amp; Resident Service Agency</div>
+                        </div>
+                    </div>
+                    <p class="footer-tagline lang-am">
+                        ዲጂታሉ የልደት ምዝገባ ፖርታል — ፈጣን፣ ደህንነቱ የተጠበቀ፣ ኦፊሴላዊ።
+                    </p>
+                    <p class="footer-tagline lang-en" style="display:none">
+                        The digital birth registration portal — fast, secure, and officially approved.
+                    </p>
+                </div>
+
+                <!-- Quick links -->
+                <div class="footer-links-col">
+                    <div class="footer-col-title lang-am">ፈጣን ማስፈንጠሪያዎች</div>
+                    <div class="footer-col-title lang-en" style="display:none">Quick Links</div>
+                    <div class="footer-links-grid">
+                        <a href="{% url 'home' %}" class="footer-link">
+                            <span class="lang-am">ዋና ገፅ</span>
+                            <span class="lang-en" style="display:none">Home</span>
+                        </a>
+                        <a href="{% url 'index' %}" class="footer-link">
+                            <span class="lang-am">ምዝገባ ቅጽ</span>
+                            <span class="lang-en" style="display:none">Registration Form</span>
+                        </a>
+                        <a href="{% url 'login' %}" class="footer-link">
+                            <span class="lang-am">ይግቡ</span>
+                            <span class="lang-en" style="display:none">Login</span>
+                        </a>
+                        <a href="{% url 'register' %}" class="footer-link">
+                            <span class="lang-am">ተመዝገቡ</span>
+                            <span class="lang-en" style="display:none">Register</span>
+                        </a>
+                        <a href="#how-it-works" class="footer-link">
+                            <span class="lang-am">እንዴት ይሰራል?</span>
+                            <span class="lang-en" style="display:none">How it Works</span>
+                        </a>
+                        <a href="#requirements" class="footer-link">
+                            <span class="lang-am">ሰነዶች</span>
+                            <span class="lang-en" style="display:none">Documents</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer-contact-col">
+                    <div class="footer-col-title lang-am">አድራሻ</div>
+                    <div class="footer-col-title lang-en" style="display:none">Contact</div>
+                    <div class="footer-contact-items">
+                        <div class="footer-contact-item">
+                            <i class="bi bi-envelope-fill footer-contact-icon"></i>
+                            <span>info@crrsa.gov.et</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="bi bi-telephone-fill footer-contact-icon"></i>
+                            <span>8482 / 8628</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="bi bi-building footer-contact-icon"></i>
+                            <span>
+                                <span class="lang-am">አዲስ አበባ፣ ኢትዮጵያ</span>
+                                <span class="lang-en" style="display:none">Addis Ababa, Ethiopia</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /footer-main -->
+
+            <!-- ── BOTTOM BAR ── -->
+            <div class="footer-bottom-bar">
+                <div class="footer-copyright">
+                    © 2026 CRRSA |
+                    <span class="lang-am">ሁሉም መብቶች የተጠበቁ ናቸው</span>
+                    <span class="lang-en" style="display:none">All rights reserved</span>
+                </div>
+                <div class="footer-badges">
+                    <span class="footer-badge">🔒 <span class="lang-am">ደህንነቱ የተጠበቀ</span><span class="lang-en" style="display:none">Secured</span></span>
+                    <span class="footer-badge">✅ <span class="lang-am">ኦፊሴላዊ</span><span class="lang-en" style="display:none">Official</span></span>
+                    <span class="footer-badge">🇪🇹 Ethiopia</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ===================== FEATURES MARQUEE — pause on hover =====================
+(function() {
+    const track = document.getElementById('featMarqueeTrack');
+    if (!track) return;
+    track.addEventListener('mouseenter', () => {
+        track.style.animationPlayState = 'paused';
+    });
+    track.addEventListener('mouseleave', () => {
+        track.style.animationPlayState = 'running';
+    });
+})();
+
+// ===================== HERO PARTICLES =====================
+(function() {
+    const container = document.getElementById('heroParticles');
+    if (!container) return;
+    const count = 22;
+    for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 60 + 12;
+        const left = Math.random() * 100;
+        const dur  = Math.random() * 18 + 10;
+        const del  = Math.random() * 12;
+        p.style.cssText = `
+            width:${size}px; height:${size}px;
+            left:${left}%; bottom:-${size}px;
+            animation-duration:${dur}s;
+            animation-delay:${del}s;
+            opacity:${Math.random() * 0.07 + 0.02};
+        `;
+        container.appendChild(p);
+    }
+})();
+
+// ===================== CERT TYPEWRITER LOOP =====================
+(function() {
+    const names = ['አበበ ካሳ ደምሴ', 'Lemi Tadesse Worku', 'ሄለን ዘውዱ አስፋው', 'Nathan Kebede Alemu'];
+    const fathers = ['ካሳ ደምሴ ወርቁ', 'Tadesse Worku Kefale', 'ዘውዱ አስፋው', 'Kebede Alemu Girma'];
+    const mothers = ['ትዕግስት አለሙ', 'Mekdes Hailu Abebe', 'አስፋው ምስጢሬ', 'Hiwot Getachew'];
+    let idx = 0;
+
+    function typeField(el, text, speed, done) {
+        el.textContent = '';
+        el.classList.add('typing');
+        let i = 0;
+        function step() {
+            if (i < text.length) {
+                el.textContent += text[i++];
+                setTimeout(step, speed);
+            } else {
+                el.classList.remove('typing');
+                if (done) done();
+            }
+        }
+        step();
+    }
+
+    function runCycle() {
+        const nameEl   = document.getElementById('certName');
+        const fatherEl = document.getElementById('certFather');
+        const motherEl = document.getElementById('certMother');
+        if (!nameEl || !fatherEl || !motherEl) return;
+
+        const i = idx % names.length;
+        // Clear all first
+        [nameEl, fatherEl, motherEl].forEach(e => e.textContent = '');
+
+        setTimeout(() => {
+            typeField(nameEl, names[i], 55, () => {
+                setTimeout(() => {
+                    typeField(fatherEl, fathers[i], 48, () => {
+                        setTimeout(() => {
+                            typeField(motherEl, mothers[i], 48, () => {
+                                idx++;
+                                // Wait a bit then cycle to next
+                                setTimeout(runCycle, 2800);
+                            });
+                        }, 300);
+                    });
+                }, 300);
+            });
+        }, 500);
+    }
+
+    // Start after entrance animation settles
+    setTimeout(runCycle, 1200);
+})();
+
+// ===================== STAT COUNTER POP =====================
+(function() {
+    const stats = document.querySelectorAll('.hero-stat-num');
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('counter-anim');
+                obs.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.5 });
+    stats.forEach(s => obs.observe(s));
+})();
+
+// ===================== THEME TOGGLE =====================
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (theme === 'dark') {
+        icon.className = 'bi bi-sun-fill';
+        label.textContent = 'Light';
+    } else {
+        icon.className = 'bi bi-moon-fill';
+        label.textContent = 'Dark';
+    }
+}
+function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+// Apply saved theme on load
+applyTheme(localStorage.getItem('theme') || 'light');
+
+// ===================== LANGUAGE TOGGLE =====================
+let currentLang = localStorage.getItem('lang') || 'am';
+function applyLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    const label = document.getElementById('langLabel');
+    if (lang === 'en') {
+        document.body.classList.add('show-en');
+        label.textContent = 'አማ';
+    } else {
+        document.body.classList.remove('show-en');
+        label.textContent = 'EN';
+    }
+}
+function toggleLanguage() {
+    applyLanguage(currentLang === 'am' ? 'en' : 'am');
+}
+applyLanguage(currentLang);
+
+// ===================== CONTINUOUS NON-STOP DEMO ENGINE =====================
+(function() {
+'use strict';
+
+// ── Step definitions: each step has am (Amharic) and en (English) versions ──
+const STEPS = [
+    // Section 1: Child
+    {
+        fieldId:'dField1', textId:'dText1', section:1,
+        am:{ label:'👶 የሕፃኑ ስም ያስገቡ', value:'አበበ ካሳ ደምሴ' },
+        en:{ label:'👶 Enter child name', value:'Abebe Kasa Demse' }
+    },
+    {
+        fieldId:'dField2', textId:'dText2', section:1,
+        am:{ label:'✏️ እንግሊዝኛ ስም ያስገቡ', value:'Abebe Kasa Demse' },
+        en:{ label:'✏️ Enter English name', value:'Abebe Kasa Demse' }
+    },
+    {
+        fieldId:'dField3', textId:'dText3', section:1,
+        am:{ label:'⚧ ጾታ ይምረጡ', value:'ወንድ / Male' },
+        en:{ label:'⚧ Select sex', value:'Male / ወንድ' }
+    },
+    {
+        fieldId:'dField4', textId:'dText4', section:1,
+        am:{ label:'📅 የልደት ቀን ያስገቡ (ዓ.ም)', value:'12 / 4 / 2016' },
+        en:{ label:'📅 Enter date of birth (E.C.)', value:'12 / 4 / 2016' }
+    },
+    {
+        fieldId:'dField5', textId:'dText5', section:1,
+        am:{ label:'📸 የሕፃን ፎቶ ይስቀሉ', value:'📎 child_photo.jpg' },
+        en:{ label:'📸 Upload child photo', value:'📎 child_photo.jpg' }
+    },
+    // Section 2: Parents
+    {
+        fieldId:'dField6', textId:'dText6', section:2,
+        am:{ label:'👨 የአባት ስም (አማርኛ)', value:'ካሳ ደምሴ ወርቁ' },
+        en:{ label:'👨 Father name (Amharic)', value:'ካሳ ደምሴ ወርቁ' }
+    },
+    {
+        fieldId:'dField7', textId:'dText7', section:2,
+        am:{ label:'👨 የአባት ስም (እንግሊዝኛ)', value:'Kasa Demse Worku' },
+        en:{ label:'👨 Father name (English)', value:'Kasa Demse Worku' }
+    },
+    {
+        fieldId:'dField8', textId:'dText8', section:2,
+        am:{ label:'👩 የእናት ስም (አማርኛ)', value:'ትዕግስት አለሙ' },
+        en:{ label:'👩 Mother name (Amharic)', value:'ትዕግስት አለሙ' }
+    },
+    {
+        fieldId:'dField9', textId:'dText9', section:2,
+        am:{ label:'👩 የእናት ስም (እንግሊዝኛ)', value:'Tigist Alemu' },
+        en:{ label:'👩 Mother name (English)', value:'Tigist Alemu' }
+    },
+    // Section 3: Location
+    {
+        fieldId:'dField10', textId:'dText10', section:3,
+        am:{ label:'🏘️ ክፍለ ከተማ ያስገቡ', value:'Yeka' },
+        en:{ label:'🏘️ Enter subcity', value:'Yeka' }
+    },
+    {
+        fieldId:'dField11', textId:'dText11', section:3,
+        am:{ label:'📍 ወረዳ ያስገቡ', value:'11' },
+        en:{ label:'📍 Enter woreda', value:'11' }
+    },
+    {
+        fieldId:'dField12', textId:'dText12', section:3,
+        am:{ label:'🏥 ሆስፒታሉን ያስገቡ', value:'Tikur Anbessa' },
+        en:{ label:'🏥 Enter hospital name', value:'Tikur Anbessa' }
+    },
+    // Section 4: Applicant
+    {
+        fieldId:'dField13', textId:'dText13', section:4,
+        am:{ label:'🧑 አቅራቢ ስም ያስገቡ', value:'ዮሐንስ ካሳ' },
+        en:{ label:'🧑 Enter applicant name', value:'Yohannes Kasa' }
+    },
+    {
+        fieldId:'dField14', textId:'dText14', section:4,
+        am:{ label:'📞 ዝምድና እና ስልክ', value:'አባት | 0912345678' },
+        en:{ label:'📞 Relation & phone', value:'Father | 0912345678' }
+    },
+];
+
+const TOTAL = STEPS.length;
+let timer = null;
+let currentIdx = 0;
+
+function getLang() {
+    return (localStorage.getItem('lang') || 'am') === 'en' ? 'en' : 'am';
+}
+
+// Build step pips
+function buildPips() {
+    const container = document.getElementById('demoStepTracker');
+    if (!container) return;
+    container.innerHTML = '';
+    STEPS.forEach((_, i) => {
+        const pip = document.createElement('div');
+        pip.className = 'demo-step-pip';
+        pip.textContent = i + 1;
+        pip.id = 'pip_' + i;
+        container.appendChild(pip);
+    });
+}
+
+function updatePips(idx) {
+    STEPS.forEach((_, i) => {
+        const pip = document.getElementById('pip_' + i);
+        if (!pip) return;
+        pip.className = 'demo-step-pip' + (i < idx ? ' done' : i === idx ? ' active' : '');
+    });
+}
+
+function updateProgress(idx) {
+    const bar = document.getElementById('demoProgressBar');
+    if (bar) bar.style.width = ((idx / TOTAL) * 100) + '%';
+}
+
+function setInstruction(text) {
+    const el = document.getElementById('demoInstructionText');
+    if (!el) return;
+    el.style.opacity = '0';
+    setTimeout(() => { el.textContent = text; el.style.opacity = '1'; }, 200);
+}
+
+function setSectionBadge(secNum) {
+    const el = document.getElementById('demoSectionBadge');
+    if (!el) return;
+    const lang = getLang();
+    const labels = {
+        1: { am:'ክፍል 1 — የሕፃኑ መረጃ', en:'Section 1 — Child Information' },
+        2: { am:'ክፍል 2 — የወላጆች መረጃ', en:'Section 2 — Parents Information' },
+        3: { am:'ክፍል 3 — ቦታ እና ሕክምና',  en:'Section 3 — Location & Contact' },
+        4: { am:'ክፍል 4 — የአቅራቢ መረጃ',   en:'Section 4 — Applicant Details' },
+    };
+    el.textContent = labels[secNum] ? labels[secNum][lang] : '';
+}
+
+function highlightSection(secNum) {
+    [1,2,3,4].forEach(n => {
+        const el = document.getElementById('demoSec' + n);
+        if (el) el.classList.toggle('active-section', n === secNum);
+    });
+}
+
+function getFieldCenter(fieldId) {
+    const wrapper = document.getElementById('demoWrapper');
+    const field   = document.getElementById(fieldId);
+    if (!wrapper || !field) return { x: 80, y: 80 };
+    const wR = wrapper.getBoundingClientRect();
+    const fR = field.getBoundingClientRect();
+    return {
+        x: fR.left - wR.left + fR.width  / 2 - 14,
+        y: fR.top  - wR.top  + fR.height / 2 - 14,
+    };
+}
+
+function moveCursor(x, y) {
+    const c = document.getElementById('demoCursor');
+    if (c) { c.style.left = x + 'px'; c.style.top = y + 'px'; }
+}
+
+function showRipple(x, y) {
+    const wrapper = document.getElementById('demoWrapper');
+    if (!wrapper) return;
+    const r = document.createElement('div');
+    r.style.cssText = `position:absolute;left:${x}px;top:${y}px;
+        width:28px;height:28px;border-radius:50%;
+        background:rgba(26,86,219,0.22);
+        transform:scale(0);pointer-events:none;z-index:50;
+        animation:ripple 0.5s ease-out forwards`;
+    wrapper.appendChild(r);
+    setTimeout(() => r.remove(), 600);
+}
+
+// Ripple keyframe (injected once)
+if (!document.getElementById('rippleStyle')) {
+    const s = document.createElement('style');
+    s.id = 'rippleStyle';
+    s.textContent = '@keyframes ripple{to{transform:scale(2.5);opacity:0}}';
+    document.head.appendChild(s);
+}
+
+function typeInto(textId, value, delay, done) {
+    const el = document.getElementById(textId);
+    if (!el) { if (done) done(); return; }
+    el.textContent = '';
+    let i = 0;
+    function next() {
+        if (i < value.length) {
+            el.textContent += value[i++];
+            timer = setTimeout(next, delay);
+        } else {
+            if (done) done();
+        }
+    }
+    next();
+}
+
+function clearAllFields() {
+    STEPS.forEach(s => {
+        const f = document.getElementById(s.fieldId);
+        const t = document.getElementById(s.textId);
+        if (f) f.className = 'demo-input';
+        if (t) t.textContent = '';
+    });
+    const btn = document.getElementById('demoSubmitBtn');
+    if (btn) { btn.style.opacity = '0'; btn.style.transform = 'translateY(4px)'; }
+    updatePips(-1);
+    updateProgress(0);
+    moveCursor(60, 60);
+    highlightSection(1);
+    setSectionBadge(1);
+}
+
+function runStep(idx) {
+    if (idx >= TOTAL) {
+        // All done: show submit button, pause, then restart
+        const btn = document.getElementById('demoSubmitBtn');
+        const lang = getLang();
+        setInstruction(lang === 'am'
+            ? '✅ ቅጹ ተሞልቷል! አስገባ ቁልፍ ይጫኑ'
+            : '✅ Form complete! Click Submit');
+        updateProgress(TOTAL);
+        if (btn) {
+            btn.style.opacity = '1';
+            btn.style.transform = 'translateY(0)';
+            // Animate cursor to button
+            const wRect = document.getElementById('demoWrapper')?.getBoundingClientRect();
+            const bRect = btn.getBoundingClientRect();
+            if (wRect) moveCursor(bRect.left - wRect.left + bRect.width/2 - 14,
+                                   bRect.top  - wRect.top  + bRect.height/2 - 14);
+            timer = setTimeout(() => {
+                showRipple(
+                    bRect.left - wRect.left + bRect.width/2 - 14,
+                    bRect.top  - wRect.top  + bRect.height/2 - 14
+                );
+                btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+                timer = setTimeout(() => {
+                    // Reset and restart seamlessly
+                    clearAllFields();
+                    currentIdx = 0;
+                    timer = setTimeout(() => runStep(0), 500);
+                }, 1800);
+            }, 900);
+        }
+        return;
+    }
+
+    currentIdx = idx;
+    const step = STEPS[idx];
+    const lang = getLang();
+    const data = step[lang];
+
+    // Update UI feedback
+    updatePips(idx);
+    updateProgress(idx);
+    highlightSection(step.section);
+    setSectionBadge(step.section);
+    setInstruction(data.label);
+
+    const pos = getFieldCenter(step.fieldId);
+    moveCursor(pos.x, pos.y);
+
+    timer = setTimeout(() => {
+        showRipple(pos.x, pos.y);
+        const field = document.getElementById(step.fieldId);
+        if (field) field.classList.add('active');
+
+        timer = setTimeout(() => {
+            typeInto(step.textId, data.value, 52, () => {
+                if (field) {
+                    field.classList.remove('active');
+                    field.classList.add('filled');
+                }
+                timer = setTimeout(() => runStep(idx + 1), 380);
+            });
+        }, 320);
+    }, 620);
+}
+
+function startDemo() {
+    if (timer) clearTimeout(timer);
+    clearAllFields();
+    buildPips();
+    timer = setTimeout(() => runStep(0), 600);
+}
+
+// Observe when section scrolls into view — start once, then it loops forever
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { startDemo(); obs.disconnect(); } });
+}, { threshold: 0.25 });
+
+const sec = document.getElementById('demo');
+if (sec) obs.observe(sec);
+
+})(); // end IIFE
+</script>
+</body>
+</html>

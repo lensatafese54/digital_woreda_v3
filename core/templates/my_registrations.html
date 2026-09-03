@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="am" data-theme="light" data-lang="am">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>የምዝገባ ሁኔታ / My Registrations — Digital Woreda</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f4f9; --card:#fff; --navbar:#1a365d;
+  --text:#1a202c; --sub:#4a5568; --muted:#718096;
+  --border:#dde3ed; --inp:#f8fafc;
+  --accent:#1a56db; --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+[data-theme=dark]{
+  --bg:#0f172a; --card:#1e293b; --navbar:#0a1628;
+  --text:#f1f5f9; --sub:#cbd5e1; --muted:#94a3b8;
+  --border:#334155; --inp:#0f172a;
+  --accent:#60a5fa; --shadow:0 4px 20px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter','Noto Sans Ethiopic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+.am{font-family:'Noto Sans Ethiopic',sans-serif}
+
+/* LANG */
+.txt-am{display:block}.txt-en{display:none}
+span.txt-am{display:inline}span.txt-en{display:none}
+[data-lang=en] .txt-am{display:none}[data-lang=en] .txt-en{display:block}
+[data-lang=en] span.txt-am{display:none}[data-lang=en] span.txt-en{display:inline}
+
+/* NAV */
+.nav{background:var(--navbar);padding:.75rem 0;box-shadow:0 2px 8px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
+.nav-inner{display:flex;align-items:center;padding:0 1.5rem}
+.nav-brand{font-size:1rem;font-weight:700;color:#fff;text-decoration:none;display:flex;align-items:center;gap:.4rem}
+.nav-brand span{color:#fbbf24}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:.55rem}
+.pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:50px;padding:.28rem .7rem;color:#fff;cursor:pointer;font-size:.8rem;font-weight:600;display:inline-flex;align-items:center;gap:.3rem;text-decoration:none;transition:background .18s;white-space:nowrap}
+.pill:hover{background:rgba(255,255,255,.22);color:#fff}
+.pill.lang-active{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.5)}
+.pill-warn{background:#d97706;border:none;border-radius:50px;padding:.28rem .85rem;color:#fff;cursor:pointer;font-size:.8rem;font-weight:700;text-decoration:none;transition:background .18s}
+.pill-warn:hover{background:#b45309;color:#fff}
+.pill-outline{background:transparent;border:1.5px solid rgba(255,255,255,.4);border-radius:50px;padding:.28rem .75rem;color:#fff;text-decoration:none;font-size:.8rem;font-weight:600;transition:background .18s}
+.pill-outline:hover{background:rgba(255,255,255,.12);color:#fff}
+
+/* PAGE HEADER */
+.page-header{background:linear-gradient(135deg,#1a365d,#1a56db);padding:2.5rem 0 2rem;margin-bottom:2rem}
+.page-header-title{font-family:'Noto Sans Ethiopic',sans-serif;font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:.2rem}
+.page-header-sub{font-size:.88rem;color:rgba(255,255,255,.7)}
+
+/* SUMMARY STRIP */
+.summary-strip{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
+.summary-card{flex:1;min-width:130px;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem;text-align:center;transition:background .3s,border-color .3s;box-shadow:var(--shadow)}
+.summary-num{font-size:2rem;font-weight:900;display:block;line-height:1.1}
+.summary-label{font-size:.75rem;color:var(--muted);margin-top:.15rem;font-family:'Noto Sans Ethiopic',sans-serif}
+.s-total   .summary-num{color:#1a56db}
+.s-approved.summary-num{color:#059669}
+.s-pending  .summary-num{color:#d97706}
+.s-rejected .summary-num{color:#dc2626}
+
+/* REGISTRATION CARD */
+.reg-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;margin-bottom:1.25rem;overflow:hidden;box-shadow:var(--shadow);transition:background .3s,border-color .3s,box-shadow .25s}
+.reg-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.13)}
+.reg-card.approved{border-left:5px solid #059669}
+.reg-card.pending {border-left:5px solid #d97706}
+.reg-card.rejected{border-left:5px solid #dc2626}
+
+.reg-card-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;padding:1.1rem 1.4rem .9rem}
+.reg-id{font-family:monospace;font-size:.9rem;font-weight:800;color:var(--accent)}
+.reg-date{font-size:.75rem;color:var(--muted)}
+
+/* STATUS BADGE */
+.status-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;border:1.5px solid}
+.status-badge.approved{background:#ecfdf5;color:#059669;border-color:#059669}
+.status-badge.pending {background:#fef3c7;color:#b45309;border-color:#d97706}
+.status-badge.rejected{background:#fef2f2;color:#dc2626;border-color:#dc2626}
+[data-theme=dark] .status-badge.approved{background:#14532d;color:#86efac;border-color:#059669}
+[data-theme=dark] .status-badge.pending {background:#451a03;color:#fcd34d;border-color:#d97706}
+[data-theme=dark] .status-badge.rejected{background:#450a0a;color:#fca5a5;border-color:#dc2626}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;animation:dotPulse 2s ease-in-out infinite}
+.approved .status-dot{background:#059669}
+.pending  .status-dot{background:#d97706}
+.rejected .status-dot{background:#dc2626}
+@keyframes dotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+
+/* REJECTION REASON */
+.rejection-box{margin:0 1.4rem .9rem;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:.8rem 1rem;font-size:.82rem;color:#b91c1c;display:flex;align-items:flex-start;gap:.6rem}
+[data-theme=dark] .rejection-box{background:#2d1515;border-color:#7f1d1d;color:#fca5a5}
+.rejection-box i{flex-shrink:0;margin-top:1px}
+
+/* CHILD INFO ROW */
+.reg-body{padding:.5rem 1.4rem 1.1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem}
+.reg-field{display:flex;flex-direction:column;gap:.15rem}
+.reg-field-label{font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.reg-field-value{font-size:.85rem;font-weight:600;color:var(--text);font-family:'Noto Sans Ethiopic','Inter',sans-serif}
+
+/* PHOTO STRIP */
+.photo-strip{display:flex;gap:.75rem;padding:.25rem 1.4rem 1.1rem;flex-wrap:wrap}
+.photo-item{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.photo-item img{width:56px;height:56px;border-radius:10px;object-fit:cover;border:2px solid var(--border)}
+.photo-item-label{font-size:.65rem;color:var(--muted);font-weight:600;text-transform:uppercase}
+
+/* CERT BUTTON */
+.cert-btn{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(135deg,#1a365d,#1a56db);color:#fff;text-decoration:none;padding:.45rem 1.1rem;border-radius:8px;font-size:.82rem;font-weight:700;transition:opacity .2s,transform .2s;margin:0 1.4rem 1.1rem}
+.cert-btn:hover{opacity:.9;transform:translateY(-1px);color:#fff}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:4rem 1rem}
+.empty-icon{font-size:4rem;margin-bottom:1rem;opacity:.6}
+.empty-title{font-family:'Noto Sans Ethiopic',sans-serif;font-size:1.2rem;font-weight:700;color:var(--sub);margin-bottom:.5rem}
+.empty-sub{font-size:.88rem;color:var(--muted);margin-bottom:1.5rem}
+
+/* ALERT */
+.info-bar{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:.75rem 1rem;font-size:.83rem;color:#1d4ed8;display:flex;align-items:flex-start;gap:.5rem;margin-bottom:1.5rem}
+[data-theme=dark] .info-bar{background:#1e3a5f;border-color:#1e40af;color:#93c5fd}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="{% url 'home' %}" class="nav-brand">🏛️ <span>Digital Woreda</span></a>
+    <div class="nav-right">
+      <button class="pill lang-active" id="btnAm" onclick="setLang('am')">አማ</button>
+      <button class="pill" id="btnEn" onclick="setLang('en')">EN</button>
+      <button class="pill" onclick="toggleTheme()">
+        <i class="bi bi-moon-fill" id="themeIco"></i>
+        <span id="themeLabel" class="txt-am am">ድቅድቅ</span>
+        <span id="themeLabelEn" class="txt-en">Dark</span>
+      </button>
+      <a href="{% url 'index' %}" class="pill">
+        <i class="bi bi-plus-circle"></i>
+        <span class="txt-am am">አዲስ ምዝገባ</span>
+        <span class="txt-en">New Registration</span>
+      </a>
+      <a href="{% url 'logout' %}" class="pill-outline">
+        <span class="txt-am am">ውጣ</span>
+        <span class="txt-en">Logout</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="container">
+    <div class="page-header-title txt-am am">📋 የምዝገባ ሁኔታ ክትትል</div>
+    <div class="page-header-title txt-en" style="font-family:'Inter',sans-serif;font-size:1.4rem">📋 My Registration Status</div>
+    <div class="page-header-sub txt-am am">
+      ሰላም፣ {{ request.user.first_name|default:request.user.email }}! — የምዝገባ ሁኔታዎን ከዚህ ይከታተሉ።
+    </div>
+    <div class="page-header-sub txt-en">
+      Hello, {{ request.user.first_name|default:request.user.email }}! — Track the status of your birth registration submissions here.
+    </div>
+  </div>
+</div>
+
+<div class="container pb-5">
+
+  <!-- PHONE NUMBER NOTICE -->
+  {% if not user_phone %}
+  <div class="info-bar">
+    <i class="bi bi-info-circle flex-shrink-0"></i>
+    <span>
+      <span class="txt-am am">ስልክ ቁጥርዎ ባልተመዘገበ ምክንያት ሁሉም ምዝገባዎ ላይታዩ ይችላሉ።</span>
+      <span class="txt-en">Your phone number is not on file — some registrations may not appear. Update your profile to see all submissions.</span>
+    </span>
+  </div>
+  {% endif %}
+
+  <!-- SUMMARY STRIP -->
+  {% if registrations %}
+  <div class="summary-strip">
+    <div class="summary-card s-total">
+      <span class="summary-num" style="color:#1a56db">{{ total_count }}</span>
+      <span class="summary-label txt-am am">ጠቅላላ ምዝገባዎች</span>
+      <span class="summary-label txt-en">Total Submissions</span>
+    </div>
+    <div class="summary-card">
+      <span class="summary-num" style="color:#059669">{{ approved_count }}</span>
+      <span class="summary-label txt-am am">ፀደቀ</span>
+      <span class="summary-label txt-en">Approved</span>
+    </div>
+    <div class="summary-card">
+      <span class="summary-num" style="color:#d97706">{{ pending_count }}</span>
+      <span class="summary-label txt-am am">ጠብቆ ያለ</span>
+      <span class="summary-label txt-en">Pending</span>
+    </div>
+    <div class="summary-card">
+      <span class="summary-num" style="color:#dc2626">{{ rejected_count }}</span>
+      <span class="summary-label txt-am am">ውድቅ ተደርጎ</span>
+      <span class="summary-label txt-en">Rejected</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- REGISTRATION CARDS -->
+  {% if registrations %}
+
+    {% for reg in registrations %}
+    {% with status=reg.status|lower %}
+    <div class="reg-card {{ status }}">
+
+      <!-- Card header -->
+      <div class="reg-card-header">
+        <div>
+          <div class="reg-id">CRRSA-{{ reg.pk|stringformat:"05d" }}</div>
+          <div class="reg-date">
+            <i class="bi bi-calendar3 me-1"></i>{{ reg.created_at|date:"M d, Y" }}
+          </div>
+        </div>
+
+        <!-- Status badge -->
+        {% if reg.status == 'APPROVED' %}
+          <span class="status-badge approved">
+            <span class="status-dot"></span>
+            <span class="txt-am am">✓ ፀደቀ</span>
+            <span class="txt-en">✓ Approved</span>
+          </span>
+        {% elif reg.status == 'PENDING' %}
+          <span class="status-badge pending">
+            <span class="status-dot"></span>
+            <span class="txt-am am">⏳ በጥብቃ ላይ</span>
+            <span class="txt-en">⏳ Pending Review</span>
+          </span>
+        {% elif reg.status == 'REJECTED' %}
+          <span class="status-badge rejected">
+            <span class="status-dot"></span>
+            <span class="txt-am am">✗ ውድቅ ተደርጎ</span>
+            <span class="txt-en">✗ Rejected</span>
+          </span>
+        {% endif %}
+      </div>
+
+      <!-- Rejection reason (if any) -->
+      {% if reg.status == 'REJECTED' and reg.rejection_reason %}
+      <div class="rejection-box">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+          <strong>
+            <span class="txt-am am">የውድቅ ምክንያት፡</span>
+            <span class="txt-en">Rejection Reason:</span>
+          </strong>
+          {{ reg.rejection_reason }}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Child info grid -->
+      <div class="reg-body">
+        <div class="reg-field">
+          <span class="reg-field-label txt-am am">የሕፃኑ ስም (አማርኛ)</span>
+          <span class="reg-field-label txt-en">Child Name (Amharic)</span>
+          <span class="reg-field-value">{{ reg.child_full_name_amharic }}</span>
+        </div>
+        <div class="reg-field">
+          <span class="reg-field-label txt-am am">የሕፃኑ ስም (እንግሊዝኛ)</span>
+          <span class="reg-field-label txt-en">Child Name (English)</span>
+          <span class="reg-field-value">{{ reg.child_full_name_english }}</span>
+        </div>
+        <div class="reg-field">
+          <span class="reg-field-label txt-am am">ጾታ</span>
+          <span class="reg-field-label txt-en">Sex</span>
+          <span class="reg-field-value">{{ reg.sex }}</span>
+        </div>
+        <div class="reg-field">
+          <span class="reg-field-label txt-am am">የልደት ቀን (ዓ.ም)</span>
+          <span class="reg-field-label txt-en">Date of Birth (E.C.)</span>
+          <span class="reg-field-value">{{ reg.birth_day }}/{{ reg.birth_month }}/{{ reg.birth_year_ec }}</span>
+        </div>
+        <div class="reg-field">
+          <span class="reg-field-label txt-am am">ቦታ</span>
+          <span class="reg-field-label txt-en">Location</span>
+          <span class="reg-field-value">{{ reg.subcity }}, Woreda {{ reg.woreda }}</span>
+        </div>
+        <div class="reg-field">
+          <span class="reg-field-label txt-am am">ሆስፒታል</span>
+          <span class="reg-field-label txt-en">Hospital</span>
+          <span class="reg-field-value">{{ reg.hospital_org_name }}</span>
+        </div>
+      </div>
+
+      <!-- Photo strip -->
+      {% if reg.child_photo or reg.father_photo or reg.mother_photo %}
+      <div class="photo-strip">
+        {% if reg.child_photo %}
+        <div class="photo-item">
+          <img src="{{ reg.child_photo.url }}" alt="Child">
+          <span class="photo-item-label txt-am am">ሕፃን</span>
+          <span class="photo-item-label txt-en">Child</span>
+        </div>
+        {% endif %}
+        {% if reg.father_photo %}
+        <div class="photo-item">
+          <img src="{{ reg.father_photo.url }}" alt="Father">
+          <span class="photo-item-label txt-am am">አባት</span>
+          <span class="photo-item-label txt-en">Father</span>
+        </div>
+        {% endif %}
+        {% if reg.mother_photo %}
+        <div class="photo-item">
+          <img src="{{ reg.mother_photo.url }}" alt="Mother">
+          <span class="photo-item-label txt-am am">እናት</span>
+          <span class="photo-item-label txt-en">Mother</span>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Certificate button (only if approved) -->
+      {% if reg.status == 'APPROVED' %}
+      <a href="{% url 'print_certificate' reg.pk %}" target="_blank" class="cert-btn">
+        <i class="bi bi-award"></i>
+        <span class="txt-am am">ሰርቲፊኬት ማውሎድ</span>
+        <span class="txt-en">Download Certificate</span>
+      </a>
+      {% endif %}
+
+    </div><!-- /reg-card -->
+    {% endwith %}
+    {% endfor %}
+
+  {% else %}
+  <!-- EMPTY STATE -->
+  <div class="empty-state">
+    <div class="empty-icon">📭</div>
+    <div class="empty-title txt-am am">ምዝገባ አልተገኘም</div>
+    <div class="empty-title txt-en" style="font-family:'Inter',sans-serif">No registrations found</div>
+    <div class="empty-sub txt-am am">
+      አሁን ድረስ ምዝገባ አላስገቡም።<br>ሕፃናዎን ለመመዝገብ ከታች ያለውን ቁልፍ ይጫኑ።
+    </div>
+    <div class="empty-sub txt-en">
+      You haven't submitted any birth registrations yet.<br>
+      Click the button below to start your first registration.
+    </div>
+    <a href="{% url 'index' %}" class="cert-btn" style="display:inline-flex;margin:0 auto">
+      <i class="bi bi-pencil-square"></i>
+      <span class="txt-am am">አዲስ ምዝገባ ጀምሩ</span>
+      <span class="txt-en">Start New Registration</span>
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+/* LANG */
+function setLang(l){
+  document.documentElement.setAttribute('data-lang',l);
+  localStorage.setItem('dwLang',l);
+  document.getElementById('btnAm').classList.toggle('lang-active',l==='am');
+  document.getElementById('btnEn').classList.toggle('lang-active',l==='en');
+}
+setLang(localStorage.getItem('dwLang')||'am');
+
+/* THEME */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('dwTheme',t);
+  document.getElementById('themeIco').className=t==='dark'?'bi bi-sun-fill':'bi bi-moon-fill';
+  document.getElementById('themeLabel').textContent=t==='dark'?'ብርሃን':'ድቅድቅ';
+  document.getElementById('themeLabelEn').textContent=t==='dark'?'Light':'Dark';
+}
+function toggleTheme(){applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
+applyTheme(localStorage.getItem('dwTheme')||'light');
+</script>
+</body>
+</html>

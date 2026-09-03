@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="am" data-theme="light" data-lang="am">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ተመዝገቡ / Register — Digital Woreda</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+/* ── THEME VARS ── */
+:root{
+  --bg:#f0f4f9;--card:#fff;--navbar:#1a365d;
+  --text:#1a202c;--sub:#4a5568;--muted:#718096;
+  --border:#dde3ed;--inp:#f8fafc;
+  --accent:#1a56db;--green:#059669;
+  --shadow:0 8px 32px rgba(0,0,0,.10);
+}
+[data-theme=dark]{
+  --bg:#0f172a;--card:#1e293b;--navbar:#0a1628;
+  --text:#f1f5f9;--sub:#cbd5e1;--muted:#94a3b8;
+  --border:#334155;--inp:#0f172a;
+  --accent:#60a5fa;--green:#34d399;
+  --shadow:0 8px 32px rgba(0,0,0,.4);
+}
+
+/* ── LANGUAGE CLASSES ── default: Amharic visible ── */
+.txt-am{ display:block }
+.txt-en{ display:none  }
+span.txt-am{ display:inline }
+span.txt-en{ display:none   }
+[data-lang=en] .txt-am{ display:none  }
+[data-lang=en] .txt-en{ display:block }
+[data-lang=en] span.txt-am{ display:none   }
+[data-lang=en] span.txt-en{ display:inline }
+
+/* ── GLOBAL ── */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter','Noto Sans Ethiopic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+.am{font-family:'Noto Sans Ethiopic',sans-serif}
+
+/* ── NAVBAR ── */
+.nav{background:var(--navbar);padding:.75rem 0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.nav-inner{display:flex;align-items:center;padding:0 1.25rem}
+.nav-brand{font-size:1rem;font-weight:700;color:#fff;text-decoration:none;display:flex;align-items:center;gap:.4rem}
+.nav-brand span{color:#fbbf24}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:.55rem}
+.pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:50px;padding:.28rem .7rem;color:#fff;cursor:pointer;font-size:.8rem;font-weight:600;display:inline-flex;align-items:center;gap:.3rem;text-decoration:none;transition:background .18s;white-space:nowrap}
+.pill:hover{background:rgba(255,255,255,.22);color:#fff}
+.pill-warn{background:#d97706;border:none;border-radius:50px;padding:.28rem .85rem;color:#fff;cursor:pointer;font-size:.8rem;font-weight:700;text-decoration:none;transition:background .18s;white-space:nowrap}
+.pill-warn:hover{background:#b45309;color:#fff}
+.pill.lang-active{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.5)}
+
+/* ── CARD ── */
+.page-wrap{min-height:calc(100vh - 54px);display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;width:100%;max-width:490px;box-shadow:var(--shadow);overflow:hidden;transition:background .3s,border-color .3s}
+.card-top{background:linear-gradient(135deg,#1a365d,#1a56db);padding:2rem 2rem 1.5rem;text-align:center}
+.card-icon{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto .9rem}
+.card-title-am{font-family:'Noto Sans Ethiopic',sans-serif;font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:.2rem}
+.card-title-en{font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:.2rem}
+.card-sub{font-size:.82rem;color:rgba(255,255,255,.75)}
+.card-body{padding:1.75rem 2rem 2rem}
+
+/* ── FORM ── */
+.f-label{display:block;font-size:.78rem;font-weight:600;color:var(--sub);margin-bottom:.32rem}
+.f-req{color:#e53e3e;font-weight:800;margin-left:1px}
+.f-wrap{position:relative;margin-bottom:1rem}
+.f-icon{position:absolute;left:.78rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.95rem;pointer-events:none}
+.f-input{width:100%;padding:.62rem .85rem .62rem 2.3rem;background:var(--inp);border:2px solid var(--border);border-radius:10px;font-size:.88rem;color:var(--text);font-family:'Inter',sans-serif;outline:none;transition:border-color .22s,box-shadow .22s,background .3s}
+.f-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,86,219,.1);background:var(--card)}
+.eye-btn{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:.95rem;padding:0}
+.eye-btn:hover{color:var(--accent)}
+
+/* password strength */
+.strength-bar-wrap{height:4px;border-radius:2px;background:var(--border);margin-top:.4rem;overflow:hidden}
+.strength-bar{height:100%;border-radius:2px;width:0;transition:width .3s,background .3s}
+.strength-hint{font-size:.72rem;margin-top:.22rem;color:var(--muted)}
+
+/* 2-col grid */
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+@media(max-width:500px){.row-2{grid-template-columns:1fr}}
+
+/* submit */
+.btn-submit{width:100%;padding:.72rem;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .2s;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:.45rem}
+.btn-submit:hover{opacity:.9;transform:translateY(-1px)}
+
+/* divider */
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.4rem 0}
+.divider hr{flex:1;border-color:var(--border)}
+.divider span{font-size:.78rem;color:var(--muted);white-space:nowrap}
+
+/* alerts */
+.alert{border-radius:10px;padding:.75rem 1rem;font-size:.84rem;display:flex;align-items:flex-start;gap:.55rem;border:1px solid;margin-bottom:1.1rem}
+.alert-err{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+[data-theme=dark] .alert-err{background:#2d1515;border-color:#7f1d1d;color:#fca5a5}
+.alert-ok{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
+[data-theme=dark] .alert-ok{background:#052e16;border-color:#166534;color:#86efac}
+.alert-close{margin-left:auto;background:none;border:none;cursor:pointer;color:inherit;font-size:.95rem;opacity:.7;padding:0;flex-shrink:0}
+
+.link{color:var(--accent);text-decoration:none;font-weight:600;font-size:.86rem}
+.link:hover{text-decoration:underline}
+.note{font-size:.74rem;color:var(--muted);text-align:center;margin-top:1rem;line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- ══════ NAVBAR ══════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="{% url 'home' %}" class="nav-brand">🏛️ <span>Digital Woreda</span></a>
+    <div class="nav-right">
+      <button class="pill lang-active" id="btnAm" onclick="setLang('am')">አማ</button>
+      <button class="pill" id="btnEn" onclick="setLang('en')">EN</button>
+      <button class="pill" onclick="toggleTheme()">
+        <i class="bi bi-moon-fill" id="themeIco"></i>
+        <span id="themeLabel" class="txt-am am">ድቅድቅ</span>
+        <span id="themeLabelEn" class="txt-en">Dark</span>
+      </button>
+      <a href="{% url 'login' %}" class="pill-warn">
+        <span class="txt-am am">ይግቡ</span>
+        <span class="txt-en">Login</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════ PAGE ══════ -->
+<div class="page-wrap">
+  <div class="card">
+
+    <div class="card-top">
+      <div class="card-icon">✅</div>
+      <div class="txt-am">
+        <div class="card-title-am am">አዲስ መለያ ይፍጠሩ</div>
+        <div class="card-sub am">የልደት ምዝገባ ለማስገባት መለያ ይፍጠሩ</div>
+      </div>
+      <div class="txt-en">
+        <div class="card-title-en">Create Account</div>
+        <div class="card-sub">Create your Digital Woreda account to submit birth registrations</div>
+      </div>
+    </div>
+
+    <div class="card-body">
+
+      <!-- MESSAGES -->
+      {% for msg in messages %}
+      <div class="alert {% if msg.tags == 'error' %}alert-err{% else %}alert-ok{% endif %}">
+        <i class="bi {% if msg.tags == 'error' %}bi-exclamation-triangle{% else %}bi-check-circle{% endif %}" style="flex-shrink:0;margin-top:1px"></i>
+        <span>{{ msg }}</span>
+        <button class="alert-close" onclick="this.closest('.alert').remove()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      {% endfor %}
+
+      <form method="POST" action="{% url 'register' %}" novalidate>
+        {% csrf_token %}
+
+        <!-- First + Last name -->
+        <div class="row-2">
+          <div>
+            <label class="f-label">
+              <span class="txt-am am">የመጀመሪያ ስም</span>
+              <span class="txt-en">First Name</span>
+              <span class="f-req">*</span>
+            </label>
+            <div class="f-wrap">
+              <i class="bi bi-person f-icon"></i>
+              <input type="text" name="first_name" id="inp_fn" class="f-input"
+                value="{{ fd.first_name|default:'' }}" required>
+            </div>
+          </div>
+          <div>
+            <label class="f-label">
+              <span class="txt-am am">የአባት ስም</span>
+              <span class="txt-en">Last Name</span>
+              <span class="f-req">*</span>
+            </label>
+            <div class="f-wrap">
+              <i class="bi bi-person f-icon"></i>
+              <input type="text" name="last_name" id="inp_ln" class="f-input"
+                value="{{ fd.last_name|default:'' }}" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <label class="f-label">
+          <span class="txt-am am">ኢሜይል አድራሻ</span>
+          <span class="txt-en">Email Address</span>
+          <span class="f-req">*</span>
+        </label>
+        <div class="f-wrap">
+          <i class="bi bi-envelope f-icon"></i>
+          <input type="email" name="email" id="inp_email" class="f-input"
+            placeholder="you@example.com"
+            value="{{ fd.email|default:'' }}" autocomplete="email" required>
+        </div>
+
+        <!-- Phone -->
+        <label class="f-label">
+          <span class="txt-am am">ስልክ ቁጥር</span>
+          <span class="txt-en">Phone Number</span>
+          <span class="f-req">*</span>
+        </label>
+        <div class="f-wrap">
+          <i class="bi bi-telephone f-icon"></i>
+          <input type="tel" name="phone" id="inp_phone" class="f-input"
+            value="{{ fd.phone|default:'' }}" required>
+        </div>
+
+        <!-- Password -->
+        <label class="f-label">
+          <span class="txt-am am">የይለፍ ቃል</span>
+          <span class="txt-en">Password</span>
+          <span class="f-req">*</span>
+        </label>
+        <div class="f-wrap" style="margin-bottom:.3rem">
+          <i class="bi bi-lock f-icon"></i>
+          <input type="password" name="password1" id="pw1" class="f-input"
+            autocomplete="new-password" required
+            oninput="checkStrength(this.value)" style="padding-right:2.5rem">
+          <button type="button" class="eye-btn" onclick="toggleEye('pw1','eye1')"><i class="bi bi-eye" id="eye1"></i></button>
+        </div>
+        <div class="strength-bar-wrap"><div class="strength-bar" id="sBar"></div></div>
+        <div class="strength-hint" id="sHint"></div>
+
+        <!-- Confirm Password -->
+        <label class="f-label" style="margin-top:.9rem">
+          <span class="txt-am am">የይለፍ ቃሉን አረጋግጡ</span>
+          <span class="txt-en">Confirm Password</span>
+          <span class="f-req">*</span>
+        </label>
+        <div class="f-wrap" style="margin-bottom:.3rem">
+          <i class="bi bi-lock-fill f-icon"></i>
+          <input type="password" name="password2" id="pw2" class="f-input"
+            autocomplete="new-password" required
+            oninput="checkMatch()" style="padding-right:2.5rem">
+          <button type="button" class="eye-btn" onclick="toggleEye('pw2','eye2')"><i class="bi bi-eye" id="eye2"></i></button>
+        </div>
+        <div class="strength-hint" id="mHint" style="margin-bottom:.9rem"></div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-submit">
+          <i class="bi bi-person-plus"></i>
+          <span class="txt-am am">አዲስ መለያ ፍጠር</span>
+          <span class="txt-en">Create Account</span>
+        </button>
+      </form>
+
+      <div class="divider">
+        <hr>
+        <span><span class="txt-am am">ወይም</span><span class="txt-en">or</span></span>
+        <hr>
+      </div>
+
+      <div style="text-align:center;font-size:.86rem;color:var(--muted)">
+        <span class="txt-am am">መለያ አለዎት?</span>
+        <span class="txt-en">Already have an account?</span>
+        <a href="{% url 'login' %}" class="link">
+          <span class="txt-am am"> ወደ ሥርዓቱ ይግቡ</span>
+          <span class="txt-en"> Sign In</span>
+        </a>
+      </div>
+
+      <div class="note">
+        <span class="txt-am am">መለያ በመፍጠር የ Digital Woreda ቅድመ ሁኔታዎችን ተቀብለዋል።</span>
+        <span class="txt-en">By creating an account you agree to the Digital Woreda terms of service.</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── LANGUAGE ── default = Amharic ── */
+const PLACEHOLDERS = {
+  am: { fn:'ለምሳሌ: አበበ', ln:'ለምሳሌ: ካሳ', phone:'09xxxxxxxx', pw:'ቢያንስ 8 ቁምፊዎች' },
+  en: { fn:'e.g. Abebe',  ln:'e.g. Kasa',  phone:'09xxxxxxxx', pw:'At least 8 characters' }
+};
+function setLang(l) {
+  document.documentElement.setAttribute('data-lang', l);
+  localStorage.setItem('dwLang', l);
+  document.getElementById('btnAm').classList.toggle('lang-active', l === 'am');
+  document.getElementById('btnEn').classList.toggle('lang-active', l === 'en');
+  const ph = PLACEHOLDERS[l];
+  document.getElementById('inp_fn').placeholder   = ph.fn;
+  document.getElementById('inp_ln').placeholder   = ph.ln;
+  document.getElementById('inp_phone').placeholder = ph.phone;
+  document.getElementById('pw1').placeholder       = ph.pw;
+  document.getElementById('pw2').placeholder       = l === 'am' ? 'ደግሞ ያስገቡ' : 'Repeat password';
+  // strength hints
+  updateStrengthHints(l);
+}
+function updateStrengthHints(l) {
+  /* Called after lang switch to redraw strength if already typed */
+  checkStrength(document.getElementById('pw1').value);
+  checkMatch();
+}
+setLang(localStorage.getItem('dwLang') || 'am');
+
+/* ── THEME ── */
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('dwTheme', t);
+  document.getElementById('themeIco').className      = t === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+  document.getElementById('themeLabel').textContent    = t === 'dark' ? 'ብርሃን' : 'ድቅድቅ';
+  document.getElementById('themeLabelEn').textContent  = t === 'dark' ? 'Light' : 'Dark';
+}
+function toggleTheme() {
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+applyTheme(localStorage.getItem('dwTheme') || 'light');
+
+/* ── EYE TOGGLE ── */
+function toggleEye(inputId, iconId) {
+  const i = document.getElementById(inputId);
+  const ic = document.getElementById(iconId);
+  i.type = i.type === 'password' ? 'text' : 'password';
+  ic.className = i.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+}
+
+/* ── PASSWORD STRENGTH ── */
+function checkStrength(v) {
+  const bar = document.getElementById('sBar');
+  const hint = document.getElementById('sHint');
+  const isAm = document.documentElement.getAttribute('data-lang') !== 'en';
+  if (!v) { bar.style.width = '0'; hint.textContent = ''; return; }
+  let s = 0;
+  if (v.length >= 8) s++;
+  if (/[A-Z]/.test(v)) s++;
+  if (/[0-9]/.test(v)) s++;
+  if (/[^A-Za-z0-9]/.test(v)) s++;
+  const lvl = [
+    { w:'25%', bg:'#ef4444', am:'ደካማ',    en:'Weak'   },
+    { w:'50%', bg:'#f97316', am:'መካከለኛ', en:'Fair'   },
+    { w:'75%', bg:'#eab308', am:'ጥሩ',      en:'Good'   },
+    { w:'100%',bg:'#22c55e', am:'ጠንካራ',   en:'Strong' },
+  ][Math.max(0, s - 1)];
+  bar.style.width = lvl.w;
+  bar.style.background = lvl.bg;
+  hint.textContent = isAm ? lvl.am : lvl.en;
+  hint.style.color = lvl.bg;
+  checkMatch();
+}
+
+/* ── PASSWORD MATCH ── */
+function checkMatch() {
+  const p1 = document.getElementById('pw1').value;
+  const p2 = document.getElementById('pw2').value;
+  const h  = document.getElementById('mHint');
+  const isAm = document.documentElement.getAttribute('data-lang') !== 'en';
+  if (!p2) { h.textContent = ''; return; }
+  if (p1 === p2) {
+    h.textContent = isAm ? '✓ ይለፍ ቃሎቹ ይዛመዳሉ' : '✓ Passwords match';
+    h.style.color = '#22c55e';
+  } else {
+    h.textContent = isAm ? '✗ ይለፍ ቃሎቹ አይዛመዱም' : '✗ Passwords do not match';
+    h.style.color = '#ef4444';
+  }
+}
+</script>
+</body>
+</html>

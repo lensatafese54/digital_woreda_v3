@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="am" data-theme="light" data-lang="am">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ይግቡ / Login — Digital Woreda</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+/* ── THEME VARS ── */
+:root{
+  --bg:#f0f4f9;--card:#fff;--navbar:#1a365d;
+  --text:#1a202c;--sub:#4a5568;--muted:#718096;
+  --border:#dde3ed;--inp:#f8fafc;
+  --accent:#1a56db;--shadow:0 8px 32px rgba(0,0,0,.10);
+}
+[data-theme=dark]{
+  --bg:#0f172a;--card:#1e293b;--navbar:#0a1628;
+  --text:#f1f5f9;--sub:#cbd5e1;--muted:#94a3b8;
+  --border:#334155;--inp:#0f172a;
+  --accent:#60a5fa;--shadow:0 8px 32px rgba(0,0,0,.4);
+}
+
+/* ── LANGUAGE CLASSES ── */
+/* default: Amharic visible, English hidden */
+.txt-am{ display:block }
+.txt-en{ display:none  }
+span.txt-am{ display:inline }
+span.txt-en{ display:none   }
+/* when lang=en is active, flip */
+[data-lang=en] .txt-am{ display:none  }
+[data-lang=en] .txt-en{ display:block }
+[data-lang=en] span.txt-am{ display:none   }
+[data-lang=en] span.txt-en{ display:inline }
+
+/* ── GLOBAL ── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter','Noto Sans Ethiopic',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;transition:background .3s,color .3s;
+}
+.am{ font-family:'Noto Sans Ethiopic',sans-serif }
+
+/* ── NAVBAR ── */
+.nav{background:var(--navbar);padding:.75rem 0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.nav-inner{display:flex;align-items:center;padding:0 1.25rem}
+.nav-brand{font-size:1rem;font-weight:700;color:#fff;text-decoration:none;display:flex;align-items:center;gap:.4rem}
+.nav-brand span{color:#fbbf24}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:.55rem}
+
+/* ── PILL BUTTONS ── */
+.pill{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
+  border-radius:50px;padding:.28rem .7rem;color:#fff;cursor:pointer;
+  font-size:.8rem;font-weight:600;display:inline-flex;align-items:center;gap:.3rem;
+  text-decoration:none;transition:background .18s;white-space:nowrap;
+}
+.pill:hover{background:rgba(255,255,255,.22);color:#fff}
+.pill-warn{
+  background:#d97706;border:none;border-radius:50px;
+  padding:.28rem .85rem;color:#fff;cursor:pointer;
+  font-size:.8rem;font-weight:700;text-decoration:none;transition:background .18s;
+  white-space:nowrap;
+}
+.pill-warn:hover{background:#b45309;color:#fff}
+
+/* lang toggle active state */
+.pill.lang-active{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.5)}
+
+/* ── CARD ── */
+.page-wrap{
+  min-height:calc(100vh - 54px);display:flex;
+  align-items:center;justify-content:center;padding:2rem 1rem;
+}
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;width:100%;max-width:420px;
+  box-shadow:var(--shadow);overflow:hidden;
+  transition:background .3s,border-color .3s;
+}
+.card-top{
+  background:linear-gradient(135deg,#1a365d,#1a56db);
+  padding:2rem 2rem 1.5rem;text-align:center;
+}
+.card-icon{
+  width:60px;height:60px;border-radius:50%;
+  background:rgba(255,255,255,.15);display:flex;
+  align-items:center;justify-content:center;
+  font-size:1.6rem;margin:0 auto .9rem;
+}
+.card-title-am{
+  font-family:'Noto Sans Ethiopic',sans-serif;
+  font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:.2rem;
+}
+.card-title-en{font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:.2rem}
+.card-sub{font-size:.82rem;color:rgba(255,255,255,.75)}
+.card-body{padding:1.75rem 2rem 2rem}
+
+/* ── FORM ── */
+.f-label{display:block;font-size:.78rem;font-weight:600;color:var(--sub);margin-bottom:.32rem}
+.f-wrap{position:relative;margin-bottom:1.1rem}
+.f-icon{position:absolute;left:.78rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.95rem;pointer-events:none}
+.f-input{
+  width:100%;padding:.65rem .85rem .65rem 2.3rem;
+  background:var(--inp);border:2px solid var(--border);
+  border-radius:10px;font-size:.9rem;color:var(--text);
+  font-family:'Inter',sans-serif;outline:none;
+  transition:border-color .22s,box-shadow .22s,background .3s;
+}
+.f-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,86,219,.1);background:var(--card)}
+.eye-btn{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:.95rem;padding:0}
+.eye-btn:hover{color:var(--accent)}
+
+/* placeholder: light gray hint text */
+.f-input::placeholder{color:#b0b8c8;font-size:.88rem;font-style:italic}
+[data-theme=dark] .f-input::placeholder{color:#4a5568}
+
+/* defeat browser autofill yellow tint */
+.f-input:-webkit-autofill,
+.f-input:-webkit-autofill:focus{
+  -webkit-box-shadow:0 0 0 1000px var(--inp) inset !important;
+  -webkit-text-fill-color:var(--text) !important;
+  transition:background-color 9999s ease-in-out 0s;
+}
+
+/* hint bar */
+.hint-bar{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:.72rem 1rem;font-size:.83rem;color:#1d4ed8;display:flex;align-items:flex-start;gap:.5rem;margin-bottom:1.1rem}
+[data-theme=dark] .hint-bar{background:#1e3a5f;border-color:#1e40af;color:#93c5fd}
+
+/* alerts */
+.alert{border-radius:10px;padding:.72rem 1rem;font-size:.84rem;display:flex;align-items:flex-start;gap:.55rem;border:1px solid;margin-bottom:1.1rem}
+.alert-err{background:#fef2f2;border-color:#fecaca;color:#b91c1c}
+[data-theme=dark] .alert-err{background:#2d1515;border-color:#7f1d1d;color:#fca5a5}
+.alert-ok{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
+[data-theme=dark] .alert-ok{background:#052e16;border-color:#166534;color:#86efac}
+.alert-close{margin-left:auto;background:none;border:none;cursor:pointer;color:inherit;font-size:.9rem;opacity:.7;padding:0;flex-shrink:0}
+
+/* submit */
+.btn-submit{
+  width:100%;padding:.72rem;
+  background:linear-gradient(135deg,#1a365d,#1a56db);
+  color:#fff;border:none;border-radius:10px;
+  font-size:.95rem;font-weight:700;cursor:pointer;
+  font-family:'Inter',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:.45rem;
+  transition:opacity .2s,transform .2s;
+}
+.btn-submit:hover{opacity:.9;transform:translateY(-1px)}
+
+/* divider */
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.4rem 0}
+.divider hr{flex:1;border-color:var(--border)}
+.divider span{font-size:.78rem;color:var(--muted);white-space:nowrap}
+.link{color:var(--accent);text-decoration:none;font-weight:600;font-size:.86rem}
+.link:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<!-- ══════ NAVBAR ══════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="{% url 'home' %}" class="nav-brand">🏛️ <span>Digital Woreda</span></a>
+    <div class="nav-right">
+      <!-- Language toggle: two buttons, one active at a time -->
+      <button class="pill lang-active" id="btnAm" onclick="setLang('am')" title="አማርኛ">
+        አማ
+      </button>
+      <button class="pill" id="btnEn" onclick="setLang('en')" title="English">
+        EN
+      </button>
+      <!-- Theme toggle -->
+      <button class="pill" onclick="toggleTheme()">
+        <i class="bi bi-moon-fill" id="themeIco"></i>
+        <span id="themeLabel" class="txt-am">ድቅድቅ</span>
+        <span id="themeLabelEn" class="txt-en">Dark</span>
+      </button>
+      <!-- Link to register -->
+      <a href="{% url 'register' %}" class="pill">
+        <span class="txt-am am">ተመዝገቡ</span>
+        <span class="txt-en">Register</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════ PAGE ══════ -->
+<div class="page-wrap">
+  <div class="card">
+
+    <!-- Gradient header -->
+    <div class="card-top">
+      <div class="card-icon">🔑</div>
+      <div class="txt-am">
+        <div class="card-title-am am">ወደ ሥርዓቱ ይግቡ</div>
+        <div class="card-sub am">ዲጂታል ወረዳ መለያዎን ያስገቡ</div>
+      </div>
+      <div class="txt-en">
+        <div class="card-title-en">Sign In</div>
+        <div class="card-sub">Sign in to your Digital Woreda account</div>
+      </div>
+    </div>
+
+    <div class="card-body">
+
+      <!-- ?next= hint -->
+      {% if request.GET.next %}
+      <div class="hint-bar">
+        <i class="bi bi-info-circle" style="flex-shrink:0;margin-top:1px"></i>
+        <span>
+          <span class="txt-am am">ቅጹን ለማስገባት መጀመሪያ ይግቡ።</span>
+          <span class="txt-en">Please log in to continue.</span>
+        </span>
+      </div>
+      {% endif %}
+
+      <!-- Django messages -->
+      {% for msg in messages %}
+      <div class="alert {% if msg.tags == 'error' %}alert-err{% else %}alert-ok{% endif %}">
+        <i class="bi {% if msg.tags == 'error' %}bi-exclamation-triangle{% else %}bi-check-circle{% endif %}" style="flex-shrink:0;margin-top:1px"></i>
+        <span>{{ msg }}</span>
+        <button class="alert-close" onclick="this.closest('.alert').remove()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      {% endfor %}
+
+      <form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" novalidate autocomplete="off">
+        {% csrf_token %}
+
+        <!-- Hidden dummy fields to trick browser autofill away from real inputs -->
+        <input type="text"     style="display:none" aria-hidden="true" tabindex="-1">
+        <input type="password" style="display:none" aria-hidden="true" tabindex="-1">
+
+        <!-- Email field -->
+        <label class="f-label">
+          <span class="txt-am am">ኢሜይል አድራሻ</span>
+          <span class="txt-en">Email Address</span>
+        </label>
+        <div class="f-wrap">
+          <i class="bi bi-envelope f-icon"></i>
+          <input type="email" name="email" id="emailInput" class="f-input"
+            placeholder="you@example.com"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            required>
+        </div>
+
+        <!-- Password field -->
+        <label class="f-label">
+          <span class="txt-am am">የይለፍ ቃል</span>
+          <span class="txt-en">Password</span>
+        </label>
+        <div class="f-wrap">
+          <i class="bi bi-lock f-icon"></i>
+          <input type="password" name="password" id="pwInput" class="f-input"
+            placeholder="••••••••"
+            autocomplete="new-password"
+            required
+            style="padding-right:2.5rem">
+          <button type="button" class="eye-btn" onclick="toggleEye()">
+            <i class="bi bi-eye" id="eyeIco"></i>
+          </button>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-submit">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span class="txt-am am">ወደ ሥርዓቱ ግቡ</span>
+          <span class="txt-en">Sign In</span>
+        </button>
+      </form>
+
+      <div class="divider">
+        <hr>
+        <span>
+          <span class="txt-am am">ወይም</span>
+          <span class="txt-en">or</span>
+        </span>
+        <hr>
+      </div>
+
+      <div style="text-align:center;font-size:.86rem;color:var(--muted)">
+        <span class="txt-am am">መለያ የለዎትም?</span>
+        <span class="txt-en">No account yet?</span>
+        <a href="{% url 'register' %}" class="link">
+          <span class="txt-am am"> አዲስ መለያ ፍጠር</span>
+          <span class="txt-en"> Create Account</span>
+        </a>
+      </div>
+
+    </div><!-- /card-body -->
+  </div>
+</div>
+
+<script>
+/* ── LANGUAGE ── default = am (Amharic) ── */
+function setLang(l) {
+  document.documentElement.setAttribute('data-lang', l);
+  localStorage.setItem('dwLang', l);
+  document.getElementById('btnAm').classList.toggle('lang-active', l === 'am');
+  document.getElementById('btnEn').classList.toggle('lang-active', l === 'en');
+  // update email placeholder
+  const emailInput = document.getElementById('emailInput');
+  if (emailInput) emailInput.placeholder = l === 'am' ? 'you@example.com' : 'you@example.com';
+  // update password placeholder
+  const pwInput = document.getElementById('pwInput');
+  if (pwInput) pwInput.placeholder = l === 'am' ? 'የይለፍ ቃልዎን ያስገቡ' : 'Your password';
+}
+// On load, default to Amharic (override stored pref only if none)
+setLang(localStorage.getItem('dwLang') || 'am');
+
+/* ── THEME ── */
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('dwTheme', t);
+  document.getElementById('themeIco').className = t === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+  document.getElementById('themeLabel').textContent    = t === 'dark' ? 'ብርሃን' : 'ድቅድቅ';
+  document.getElementById('themeLabelEn').textContent  = t === 'dark' ? 'Light' : 'Dark';
+}
+function toggleTheme() {
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+applyTheme(localStorage.getItem('dwTheme') || 'light');
+
+/* ── EYE TOGGLE ── */
+function toggleEye() {
+  const i = document.getElementById('pwInput');
+  const ic = document.getElementById('eyeIco');
+  i.type = i.type === 'password' ? 'text' : 'password';
+  ic.className = i.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+}
+
+/* ── DEFEAT AUTOFILL ── */
+// Some browsers fill fields despite autocomplete=off.
+// Clear values right after DOM is ready, then focus email cleanly.
+window.addEventListener('DOMContentLoaded', function() {
+  const email = document.getElementById('emailInput');
+  const pw    = document.getElementById('pwInput');
+  // Short delay gives browser time to fill, then we wipe it
+  setTimeout(function() {
+    if (email && email.value) email.value = '';
+    if (pw    && pw.value)    pw.value    = '';
+    if (email) email.focus();
+  }, 80);
+});
+</script>
+</body>
+</html>

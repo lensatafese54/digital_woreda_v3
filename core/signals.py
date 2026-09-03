@@ -1,7 +1,30 @@
 from django.db.models.signals import post_save, pre_save
+from django.contrib.auth.models import User
 from django.dispatch import receiver
-from .models import BirthRegistration
+from .models import BirthRegistration, UserProfile
 from .utils import send_status_sms
+
+
+# -------------------------------------------------------------------
+# Auto-create UserProfile for every new User
+# New users always get role=USER and is_staff=False
+# (Admin is created only via `python manage.py create_admin`)
+# -------------------------------------------------------------------
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if not created:
+        return
+    # Determine role based on is_staff (admin command sets is_staff=True first)
+    role = UserProfile.Role.ADMIN if instance.is_staff else UserProfile.Role.USER
+    profile, _ = UserProfile.objects.get_or_create(user=instance)
+    if profile.role != role:
+        profile.role = role
+        profile.save(update_fields=['role'])
+
+    # Safety net: if this is NOT a staff user, make absolutely sure is_staff stays False
+    if not instance.is_staff:
+        # No need to re-save — create_user already sets is_staff=False
+        pass
 
 
 @receiver(pre_save, sender=BirthRegistration)
