@@ -355,7 +355,7 @@ python manage.py createsuperuser  # alternative Django built-in (sets role=ADMIN
 ### Collect static files (production)
 
 ```bash
-python manage.py collectstatic
+python manage.py collectstatic --upload-unhashed-files
 ```
 
 ---
